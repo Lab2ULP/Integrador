@@ -7,3 +7,5 @@ const sequelize = new Sequelize('agenda_consultorio', 'root', '', {
 });
 
 module.exports = sequelize;
+
+// mi ramita
