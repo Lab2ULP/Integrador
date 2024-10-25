@@ -1,0 +1,19 @@
+//- /views/crearPersona.pug
+doctype html
+html
+  head
+    title Crear Persona
+  body
+    h1 Crear Persona
+    form(action='/api/personas', method='POST')
+      label(for='nombre') Nombre:
+      input(type='text', name='nombre', required)
+      br
+      label(for='dni') DNI:
+      input(type='number', name='dni', required)
+      br
+      label(for='nacimiento') Fecha de Nacimiento:
+      input(type='date', name='nacimiento', required)
+      br
+      button(type='submit') Crear
+    a(href='/api/personas') Volver a la lista

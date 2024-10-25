@@ -1,0 +1,15 @@
+form(action=`/api/personas/editar/${persona.id}`, method='POST')
+  label(for='nombre') Nombre:
+  input(type='text', name='nombre', value=persona.nombre, required)
+  br
+
+  label(for='dni') DNI:
+  input(type='number', name='dni', value=persona.dni, required)
+  br
+
+  label(for='nacimiento') Fecha de Nacimiento:
+  input(type='date', name='nacimiento', value=persona.nacimiento ? persona.nacimiento.toISOString().substring(0, 10) : '', required)
+  br
+
+  button(type='submit') Actualizar
+  a(href='/api/personas') Volver a la lista

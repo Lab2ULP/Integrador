@@ -1,0 +1,21 @@
+//- /views/borrarPersona.pug
+doctype html
+html
+  head
+    title Borrar Persona
+    script.
+      function confirmarBorrado(personaId) {
+        fetch(`/api/personas/${personaId}`, {
+          method: 'DELETE'
+        })
+        .then(response => {
+             alert("Persona eliminada del sistema")
+            window.location.href = '/api/personas'; // Redirige a la lista de personas
+        })
+        .catch(error => console.error('Error:', error));
+      }
+  body
+    h1 Confirmar Borrado
+    p Estás a punto de borrar la persona: #{persona.nombre}. ¿Estás seguro?
+    button(onclick=`confirmarBorrado(${persona.id})`) Confirmar Borrar
+    a(href='/api/personas') Volver a la lista
