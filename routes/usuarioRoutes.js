@@ -1,7 +1,7 @@
 // /routes/clienteRoutes.js
 const express = require('express');
 const router = express.Router();
-const clienteController = require('../controllers/usuarioController');
+const usuarioController = require('../controllers/usuarioController');
 
 // Mostrar el formulario para crear un cliente
 router.get('/crear', (req, res) => {
@@ -9,6 +9,6 @@ router.get('/crear', (req, res) => {
 });
 
 // Manejar la creación del cliente
-router.post('/crear', clienteController.crearUsuario);
+router.post('/crear', usuarioController.crearUsuario);
 
 module.exports = router;
