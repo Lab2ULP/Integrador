@@ -1,7 +1,7 @@
 const Persona = require('../models/persona');
 const Usuario = require('../models/usuario');
 
-exports.crearCliente = async (req, res) => {
+exports.crearUsuario = async (req, res) => {
   const { nombre, dni, nacimiento, email, password } = req.body;
 
   try {

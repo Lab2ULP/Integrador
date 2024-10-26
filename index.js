@@ -6,7 +6,7 @@ const personaRoutes = require('./routes/personaRoutes');
 const sequelize = require('./config/database'); // Asegúrate de que la ruta a tu archivo de configuración de la base de datos sea correcta
 const session = require('express-session')
 const authRoutes = require('./routes/authRoutes');
-const clienteRoutes = require('./routes/clienteRoutes')
+const usuarioRoutes = require('./routes/usuarioRoutes')
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,7 +30,7 @@ app.use(session({
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views')); // Ruta a la carpeta de vistas
 
-app.use('/clientes', clienteRoutes);
+app.use('/clientes', usuarioRoutes);
 
 
 // Rutas
