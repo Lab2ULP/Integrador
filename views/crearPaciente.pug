@@ -1,0 +1,42 @@
+//- /views/crearCliente.pug
+doctype html
+html
+  head
+    title Crear Usuario
+  body
+    h1 Registro de Usuario
+    form(action="/pacientes/crear", method="POST")
+      //- Datos de Persona
+      label(for="nombre") Nombre:
+      input(type="text" name="nombre" required placeholder="Nombre completo")
+      br
+
+      label(for="dni") DNI:
+      input(type="number" name="dni" required placeholder="DNI")
+      br
+
+      label(for="nacimiento") Fecha de Nacimiento:
+      input(type="date" name="nacimiento" required)
+      br
+
+      //- Datos de Usuario
+      label(for="email") Correo Electrónico:
+      input(type="email" name="email" required placeholder="Correo electrónico")
+      br
+
+      label(for="password") Contraseña:
+      input(type="password" name="password" required placeholder="Contraseña")
+      br
+      //- Datos del paciente  
+      label(for="obra_social") Obra social: 
+      select(name="obra_social")
+        option(value="obra a") obra a
+        option(value="obra b") obra b  
+        option(value="obra c") obra c  
+        option(value="obra d") obra d    
+
+      label(for="dato_contacto") datos de contacto
+      input(type="number" name="dato_contacto" required placeholder="266 4202020") 
+
+      button(type="submit") Crear Paciente
+    a(href="/") Volver al inicio
