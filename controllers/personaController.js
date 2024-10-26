@@ -6,7 +6,7 @@ const Persona = require('../models/persona'); // Asegúrate de que la ruta sea c
 exports.renderListaPersonas = async (req, res) => {
   try {
     const personas = await Persona.findAll();
-    
+ id   
     // Convertir nacimiento de string a Date
     personas.forEach(persona => {
       if (typeof persona.nacimiento === 'string') {
@@ -20,12 +20,7 @@ exports.renderListaPersonas = async (req, res) => {
     return res.status(500).send('Error al obtener las personas');
   }
 };
-
-
-
-  
-  
-
+ 
 // Renderizar la vista de crear persona
 exports.renderCrearPersona = (req, res) => {
   res.render('crearPersona');
@@ -34,7 +29,7 @@ exports.renderCrearPersona = (req, res) => {
 // Renderizar la vista de editar persona
 exports.renderEditarPersona = async (req, res) => {
   try {
-    const persona = await Persona.findByPk(req.params.id);
+    const persona = await Persona.findByPk(req.params.ID);
 
     // Convertir nacimiento a Date si es una cadena
     if (typeof persona.nacimiento === 'string') {
@@ -100,7 +95,7 @@ exports.updatePersona = async (req, res) => {
   try {
     const { nombre, dni, nacimiento } = req.body;
     await Persona.update({ nombre, dni, nacimiento }, {
-      where: { id: req.params.id },
+      where: { ID: req.params.id },
     });
     res.redirect('/api/personas'); // Redirige a la lista de personas
   } catch (error) {
@@ -113,7 +108,7 @@ exports.updatePersona = async (req, res) => {
 exports.deletePersona = async (req, res) => {
   try {
     await Persona.destroy({
-      where: { id: req.params.id },
+      where: { ID: req.params.id },
     });
     res.redirect('/api/personas/'); // Redirige a la lista de personas
   } catch (error) {

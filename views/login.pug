@@ -5,9 +5,9 @@ html
     link(rel="stylesheet" href="/css/style.css") 
   body
     h1 Iniciar Sesión
-    form(action="/api/login", method="POST")
-      label(for="username") Nombre de Usuario:
-      input(type="text" name="username" required placeholder="Ingresa tu usuario")
+    form(action="/auth/login", method="POST")
+      label(for="email") email:
+      input(type="text" name="email" required placeholder="Ingresa tu email")
       br
 
       label(for="password") Contraseña:
@@ -17,4 +17,4 @@ html
       button(type="submit") Iniciar Sesión
 
     p No tienes cuenta? 
-      a(href="/register") Regístrate
+      a(href="/clientes/crear") Regístrate

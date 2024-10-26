@@ -5,7 +5,7 @@ const sequelize = require('../config/database');
 class Persona extends Model {}
 
 Persona.init({
-  id: {
+  ID: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
