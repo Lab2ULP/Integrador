@@ -2,10 +2,10 @@
 doctype html
 html
   head
-    title Crear Cliente
+    title Crear un usuario
   body
-    h1 Registro de Cliente
-    form(action="/clientes/crear", method="POST")
+    h1 Registro de usuarios
+    form(action="/usuarios/crear", method="POST")
       //- Datos de Persona
       label(for="nombre") Nombre:
       input(type="text" name="nombre" required placeholder="Nombre completo")
@@ -28,5 +28,5 @@ html
       input(type="password" name="password" required placeholder="Contraseña")
       br
 
-      button(type="submit") Crear Cliente
+      button(type="submit") Crear Usuario
     a(href="/") Volver al inicio

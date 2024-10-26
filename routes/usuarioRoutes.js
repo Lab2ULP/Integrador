@@ -5,7 +5,7 @@ const clienteController = require('../controllers/usuarioController');
 
 // Mostrar el formulario para crear un cliente
 router.get('/crear', (req, res) => {
-  res.render('crearCliente');
+  res.render('crearUsuario');
 });
 
 // Manejar la creación del cliente

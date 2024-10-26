@@ -30,7 +30,7 @@ app.use(session({
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views')); // Ruta a la carpeta de vistas
 
-app.use('/clientes', usuarioRoutes);
+app.use('/usuarios', usuarioRoutes);
 
 
 // Rutas
