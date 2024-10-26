@@ -45,3 +45,11 @@ app.get('/',(req,res)=>{
 app.use('/auth',authRoutes);
 
 
+// Sincronizar la base de datos y iniciar el servidor
+sequelize.sync().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  });
+}).catch(err => {
+  console.error('Error al conectar a la base de datos:', err);
+});
