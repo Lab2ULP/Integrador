@@ -1,0 +1,18 @@
+// /views/listarPersonas.pug
+table
+  thead
+    tr
+      th Nombre
+      th DNI
+      th Nacimiento
+      th Acciones
+  tbody
+    each persona in personas
+      tr
+        td= persona.nombre
+        td= persona.dni
+        td= persona.nacimiento ? persona.nacimiento.toISOString().substring(0, 10) : 'Fecha no disponible' 
+        td
+          a(href=`/api/personas/${persona.id}`) Ver
+          a(href=`/api/personas/editar/${persona.id}`) Editar
+          a(href=`/api/personas/borrar/${persona.id}`) Eliminar
