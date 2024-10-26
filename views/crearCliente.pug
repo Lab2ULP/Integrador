@@ -1,0 +1,32 @@
+//- /views/crearCliente.pug
+doctype html
+html
+  head
+    title Crear Cliente
+  body
+    h1 Registro de Cliente
+    form(action="/clientes/crear", method="POST")
+      //- Datos de Persona
+      label(for="nombre") Nombre:
+      input(type="text" name="nombre" required placeholder="Nombre completo")
+      br
+
+      label(for="dni") DNI:
+      input(type="number" name="dni" required placeholder="DNI")
+      br
+
+      label(for="nacimiento") Fecha de Nacimiento:
+      input(type="date" name="nacimiento" required)
+      br
+
+      //- Datos de Usuario
+      label(for="email") Correo Electrónico:
+      input(type="email" name="email" required placeholder="Correo electrónico")
+      br
+
+      label(for="password") Contraseña:
+      input(type="password" name="password" required placeholder="Contraseña")
+      br
+
+      button(type="submit") Crear Cliente
+    a(href="/") Volver al inicio
