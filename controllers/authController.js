@@ -23,12 +23,15 @@ exports.iniciarSesion = async (req, res) => {
     req.session.rol = usuario.rolID;
 
     // Renderizar vistas según el rol
+
     if (usuario.rolID == 1) {
       res.render('adminPincipal');
     } else if (usuario.rolID == 2) {
+
+
       res.render('secretarioPrincipal');
     } else {
-      res.render('clientePrincipal');
+      res.render('usuarioPrincipal');
     }
   } catch (error) {
     console.error(error);
