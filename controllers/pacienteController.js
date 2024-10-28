@@ -1,11 +1,13 @@
 const Persona = require('../models/persona');
 const Usuario = require('../models/usuario');
+
 const Paciente = require('../models/paciente')
 
 exports.crearPaciente = async(req,res)=>{
     const { nombre, dni, nacimiento, email, password, obra_social, dato_contacto } = req.body;
     
     try{
+
     // Crear la persona primero
     const nuevaPersona = await Persona.create({ nombre, dni, nacimiento });
 
@@ -14,6 +16,7 @@ exports.crearPaciente = async(req,res)=>{
       personaID: nuevaPersona.ID,
       email,
       password,
+
       rolID: 3 // Asumimos que el rol de 'Cliente' tiene ID 3
     });
 
@@ -30,3 +33,4 @@ exports.crearPaciente = async(req,res)=>{
         res.status(500).send('Error al crear el paciente');
     }
 }
+

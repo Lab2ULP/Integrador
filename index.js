@@ -31,10 +31,13 @@ app.use(session({
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views')); // Ruta a la carpeta de vistas
 
+
 app.use('/usuarios', usuarioRoutes);
 
 app.use('/pacientes',pacienteRoutes);
 
+
+app.use('/pacientes',pacienteRoutes);
 // Rutas
 app.use('/api/personas', personaRoutes); // Todas las rutas de personas se agrupan bajo /api/personas
 
