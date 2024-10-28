@@ -2,9 +2,11 @@
 doctype html
 html
   head
-    title Crear Usuario
+
+    title Crear un usuario
   body
-    h1 Registro de Usuario
+    h1 Registro de usuarios
+
     form(action="/pacientes/crear", method="POST")
       //- Datos de Persona
       label(for="nombre") Nombre:
@@ -27,16 +29,18 @@ html
       label(for="password") Contraseña:
       input(type="password" name="password" required placeholder="Contraseña")
       br
-      //- Datos del paciente  
+
+      //- Datos del paciente
       label(for="obra_social") Obra social: 
       select(name="obra_social")
-        option(value="obra a") obra a
-        option(value="obra b") obra b  
-        option(value="obra c") obra c  
-        option(value="obra d") obra d    
-
+       option(value="obra a") obra a
+       option(value="obra b") obra b
+       option(value="obra c") obra c
+       option(value="obra d") obra d  
+      br
       label(for="dato_contacto") datos de contacto
-      input(type="number" name="dato_contacto" required placeholder="266 4202020") 
+      input(type="number" name="dato_contacto" required placeholder="266 4202020")
+      br
+      button(type="submit") Crear paciente
 
-      button(type="submit") Crear Paciente
     a(href="/") Volver al inicio

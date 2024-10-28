@@ -11,13 +11,8 @@ exports.iniciarSesion = async (req, res) => {
       return res.status(404).send('Usuario no encontrado');
     }
 
-    // Imprimir información para depuración
-    console.log("Contraseña ingresada:", password);
-    console.log("Contraseña encriptada:", usuario.password);
-
     // Comparar la contraseña
     const passwordValido = await bcrypt.compare(password, usuario.password);
-    console.log("¿Son iguales?", passwordValido);
 
     if (!passwordValido) {
       return res.status(401).send('Contraseña incorrecta');
@@ -26,11 +21,14 @@ exports.iniciarSesion = async (req, res) => {
     // Crear sesión
     req.session.userId = usuario.ID;
     req.session.rol = usuario.rolID;
-    
+
     // Renderizar vistas según el rol
-    if (usuario.rolID === 1) {
+
+    if (usuario.rolID == 1) {
       res.render('adminPincipal');
-    } else if (usuario.rolID === 2) {
+    } else if (usuario.rolID == 2) {
+
+
       res.render('secretarioPrincipal');
     } else {
       res.render('usuarioPrincipal');

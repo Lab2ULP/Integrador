@@ -8,7 +8,7 @@ router.get('/crear', (req, res) => {
   res.render('crearUsuario');
 });
 
-// Manejar la creación del usuario
+
 router.post('/crear', usuarioController.crearUsuario);
 
 module.exports = router;
