@@ -1,6 +1,8 @@
 const { DataTypes } = require('sequelize')
 const sequelize = require('../config/database');
 const Persona = require('./persona');
+const Especialidad = require('./especialidad');
+const ProfesionalEspecialidad = require('./profesionalEspecialidad');
 
 const Profesional = sequelize.define('Profesional', {
     ID:{
@@ -23,3 +25,5 @@ const Profesional = sequelize.define('Profesional', {
 
 Profesional.belongsTo(Persona,{foreignKey:'personaID',as:'persona'})
 module.exports = Profesional;
+
+Profesional.belongsToMany(Especialidad, { through: ProfesionalEspecialidad, foreignKey: 'profesionalID' });
