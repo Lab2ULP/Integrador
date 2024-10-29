@@ -1,50 +1,27 @@
-const Persona = require('../models/persona');
-const Profesional = require('../models/profesional')
-const Especialidad = require('../models/especialidad')
+const { Profesional, Especialidad, Persona } = require('../models'); // Asegúrate de incluir Persona
 
-exports.crearProfesional = async(req,res)=>{
-    try {
-    const {nombre, dni, nacimiento} = req.body;
-    await Persona.create({nombre, dni, nacimiento});
-    res.redirect('/');
-    } catch (error) {
-    console.error(error);
-    res.status(500).send('Error al crear el profesional');
-    };
-}
 
-exports.obtenerProfesionalConEspecialidades = async (req, res) => {
-    const profesionalID = req.params.id;
-    
+exports.getProfesionalesConEspecialidades = async (req, res) => {
     try {
-      const profesional = await Profesional.findOne({
-        where: { id: profesionalID },
-        include: [{ model: Especialidad }]
-      });
-  
-      if (!profesional) {
-        return res.status(404).send('Profesional no encontrado');
-      }
-  
-      res.render('detallesProfesional', { profesional }); // Renderiza una vista o envía la respuesta JSON
+        const profesionales = await Profesional.findAll({
+            include: [
+                {
+                    model: Especialidad,
+                    through: {
+                        attributes: [] // Omitimos la tabla intermedia
+                    },
+                    attributes: ['nombre'] // Traemos solo los campos necesarios
+                },
+                {
+                    model: Persona,
+                    attributes: ['nombre'] // Traemos solo el nombre de la persona
+                }
+            ]
+        });
+        console.log("tipooooooooooooo",typeof(profesionales[0].Especialidads[0].nombre))
+        res.render('listaProfesionales',{profesionales})
     } catch (error) {
-      console.error(error);
-      res.status(500).send('Error al obtener el profesional');
+        console.error('Error al obtener los profesionales con sus especialidades:', error);
+        res.status(500).json({ error: 'Error al obtener los profesionales con sus especialidades' });
     }
 };
-
-exports.obtenerMedicos = async(req,res)=>{
-  try{
-    const medicos = await Profesional.findAll({
-      include:{
-        model:Especialidad,
-        attributes:['nombre'],
-        through:{attributes:[]}
-      }
-    });
-    
-    res.render('',{medicos})
-  } catch (error) {
-    res.status(500).send('Error al obtener los médicos con sus especialidades');
-  }
-}

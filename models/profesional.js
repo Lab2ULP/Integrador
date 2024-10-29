@@ -1,29 +1,25 @@
-const { DataTypes } = require('sequelize')
+const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const Persona = require('./persona');
 const Especialidad = require('./especialidad');
-const ProfesionalEspecialidad = require('./profesionalEspecialidad');
+const Persona = require('./persona')
 
 const Profesional = sequelize.define('Profesional', {
-    ID:{
+    ID: {
         type: DataTypes.INTEGER,
-        primaryKey:true,
-        autoIncrement:true
+        primaryKey: true,
+        autoIncrement: true
     },
     personaID: {
-        type:DataTypes.INTEGER,
-        allowNull:false,
-        references: {
-            model:Persona,
-            key:'ID'
-        }
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    estado: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
     }
 }, {
-    tableName:'profesionales',
-    timestamps:false
-})
+    tableName: 'profesionales',
+    timestamps: false,
+});
 
-Profesional.belongsTo(Persona,{foreignKey:'personaID',as:'persona'})
 module.exports = Profesional;
-
-Profesional.belongsToMany(Especialidad, { through: ProfesionalEspecialidad, foreignKey: 'profesionalID' });

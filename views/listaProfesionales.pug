@@ -1,17 +1,17 @@
-extends layautAdmin
+extends layoutAdmin
 
 block content
-h1 Lista de Médicos con Especialidades
-    table
-      thead
+  h1 Lista de Médicos con Especialidades
+  table
+    thead
+      tr
+        th Nombre
+        th Especialidades
+    tbody
+      each medico in profesionales
         tr
-          th Nombre
-          th Especialidades
-      tbody
-        each medico in medicos
-          tr
-            td= medico.persona.nombre // Asumiendo que "persona" está relacionado
-            td
-              ul
-                each especialidad in medico.Especialidads // Sequelize añade una "s" al pluralizar
-                  li= especialidad.nombre
+          td= medico.Persona.nombre
+          td
+            ul
+              each especialidad in medico.Especialidads 
+                li= especialidad.nombre

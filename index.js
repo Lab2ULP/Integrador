@@ -8,6 +8,8 @@ const session = require('express-session')
 const authRoutes = require('./routes/authRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes')
 const pacienteRoutes = require('./routes/pacienteRoutes')
+const profesionalRoutes = require('./routes/profesionalRoutes');
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -36,6 +38,7 @@ app.use('/usuarios', usuarioRoutes);
 
 app.use('/pacientes',pacienteRoutes);
 
+app.use('/lis', profesionalRoutes); // Prefijo '/api' (opcional)
 
 app.use('/pacientes',pacienteRoutes);
 // Rutas

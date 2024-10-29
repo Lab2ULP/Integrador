@@ -1,10 +1,7 @@
-// /models/usuario.js
-const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { DataTypes } = require('sequelize');
+const db = require('../config/database');
 
-class Persona extends Model {}
-
-Persona.init({
+const Persona = db.define('Persona',{
   ID: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -22,11 +19,11 @@ Persona.init({
   nacimiento: {
     type: DataTypes.DATE,
     allowNull: false,
-  },
-}, {
-  sequelize,
-  modelName: 'Persona',
-  timestamps:false
-});
+  }
+},{
+    modelName: 'Persona',
+    timestamps:false
+})
+
 
 module.exports = Persona;

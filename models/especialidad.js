@@ -1,23 +1,21 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const Profesional = require('./profesional');
-const ProfesionalEspecialidad = require('./profesionalEspecialidad');
+const Profesional = require('./profesional'); // Importamos el modelo Profesional
 
 const Especialidad = sequelize.define('Especialidad', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  nombre: {
-    type: DataTypes.STRING(30),
-    allowNull: false
-  }
+    ID: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    nombre: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        unique: true
+    }
 }, {
-  tableName: 'especialidades',
-  timestamps: false
+    tableName: 'especialidades',
+    timestamps: false
 });
 
 module.exports = Especialidad;
-
-Especialidad.belongsToMany(Profesional, { through: ProfesionalEspecialidad, foreignKey: 'especialidadID' });

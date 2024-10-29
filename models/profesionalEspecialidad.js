@@ -1,35 +1,37 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
-const Profesional = require('./profesional');
-const Especialidad = require('./especialidad');
+const sequelize = require('../config/databasee');
+const Profesional = require('./profesional'); // Importamos el modelo Profesional
+const Especialidad = require('./especialidad'); // Importamos el modelo Especialidad
 
-const ProfesionalEspecialidad = sequelize.define('ProfesionalEspecialidad', {
-  ID: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-},
-especialidadID: {
-  type: DataTypes.INTEGER,
-  references: {
-    model: Especialidad,
-    key: 'id'
-  }
-},
-profesionalID: {
-  type: DataTypes.INTEGER,
-  references: {
-    model: Profesional,
-    key: 'id'
-  }
-},
-  matricula: {
-    type: DataTypes.STRING(30),
-    allowNull: false
-}
+const EspecialidadesProfesionales = sequelize.define('EspecialidadesProfesionales', {
+    ID: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    especialidadID: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Especialidad,
+            key: 'ID'
+        }
+    },
+    profesionalID: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Profesional,
+            key: 'ID'
+        }
+    },
+    matricula: {
+        type: DataTypes.STRING(10),
+        allowNull: false
+    }
 }, {
-  tableName: 'especialidades_profesionales',
-  timestamps: false
+    tableName: 'especialidades_profesionales',
+    timestamps: false
 });
 
-module.exports = ProfesionalEspecialidad;
+module.exports = EspecialidadesProfesionales;

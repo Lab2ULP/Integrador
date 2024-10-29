@@ -1,30 +1,24 @@
-// layout.pug
 doctype html
 html
   head
     title Aplicación
-    //link(rel="stylesheet" href="/css/style.css") // Link a tus estilos
+    
 
   body
-    // Header
     header
       h1 Mi Aplicación
       nav
         a(href="/") Inicio
         a(href="/otra-ruta") Otra sección
 
-    // Contenedor principal
     .container
-      // Menú lateral
       aside
         ul
           li: a(href="/opcion1") Opción 1
           li: a(href="/opcion2") Opción 2
 
-      // Contenido dinámico
       main
         block content
 
-    // Footer
     footer
       p © 2024 Mi Aplicación
