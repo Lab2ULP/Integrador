@@ -1,4 +1,4 @@
-const { Profesional, Especialidad, Persona } = require('../models'); // Asegúrate de incluir Persona
+const { Profesional, Especialidad, Persona } = require('../models/main'); // Asegúrate de incluir Persona
 
 
 exports.getProfesionalesConEspecialidades = async (req, res) => {
