@@ -6,8 +6,9 @@ const personaRoutes = require('./routes/personaRoutes');
 const sequelize = require('./config/database'); // Asegúrate de que la ruta a tu archivo de configuración de la base de datos sea correcta
 const session = require('express-session')
 const authRoutes = require('./routes/authRoutes');
-const usuarioRoutes = require('./routes/usuarioRoutes')
-const pacienteRoutes = require('./routes/pacienteRoutes')
+const usuarioRoutes = require('./routes/usuarioRoutes');
+const pacienteRoutes = require('./routes/pacienteRoutes');
+//const pdnlRoutes = require('./routes/pdnlRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -36,8 +37,6 @@ app.use('/usuarios', usuarioRoutes);
 
 app.use('/pacientes',pacienteRoutes);
 
-
-app.use('/pacientes',pacienteRoutes);
 // Rutas
 app.use('/api/personas', personaRoutes); // Todas las rutas de personas se agrupan bajo /api/personas
 
@@ -46,6 +45,8 @@ app.get('/',(req,res)=>{
 })
 
 app.use('/auth',authRoutes);
+
+//app.use('/noLaborables', pdnlRoutes);
 
 
 // Sincronizar la base de datos y iniciar el servidor

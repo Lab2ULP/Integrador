@@ -1,0 +1,46 @@
+extends layautAdmin
+
+block content
+    extends layout
+
+  h1 Lista de Días No Laborables por Profesional
+  
+  // Tabla para mostrar días no laborables
+  table
+    thead
+      tr
+        th Profesional
+        th Día No Laborable
+        th Fecha
+        th Acciones
+    tbody
+      each p in profesional
+        tr
+          td= p.Profesional.nombre
+          td= p.DiasNoLaborables.nombre
+          td= p.fecha ? p.fecha.toISOString().substring(0, 10) : 'Fecha no disponible'
+          td
+            a(href=`/api/profesional_dias_no_laborables/${p.ID}`) Ver
+            a(href=`/api/profesional_dias_no_laborables/editar/${p.ID}`) Editar
+            a(href=`/api/profesional_dias_no_laborables/borrar/${p.ID}`) Eliminar
+
+  // Formulario para agregar un nuevo día no laborable para un profesional
+  h2 Agregar Día No Laborable
+  form(action="/api/profesional_dias_no_laborables/add" method="POST")
+    div
+      label(for="profesionalID") Profesional:
+      select(name="profesionalID" required)
+        option(value="" disabled selected) Selecciona un profesional
+        each prof in profesional
+          option(value=prof.ID) #{prof.nombre}
+    div
+      label(for="dia_no_laboralID") Día No Laborable:
+      select(name="dia_no_laboralID" required)
+        option(value="" disabled selected) Selecciona un día no laborable
+        each dia in diasNoLaborables
+          option(value=dia.ID) #{dia.nombre}
+    div
+      label(for="fecha") Fecha:
+      input(type="date" name="fecha" required)
+    div
+      button(type="submit") Agregar
