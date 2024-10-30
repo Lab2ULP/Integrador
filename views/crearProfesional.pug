@@ -2,7 +2,7 @@ extends layoutAdmin
 
 block content
   h1 Cargar Nuevo Profesional
-  form(action='/profesionales/guardar', method='POST')
+  form(action='/lis/crear', method='POST')
     label(for='nombre') Nombre:
     input(type='text', name='nombre', required, placeholder='Ingrese el nombre del profesional')
     br

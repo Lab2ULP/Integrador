@@ -1,6 +1,6 @@
 // Importamos todos los modelos desde el archivo principal
 const { Profesional, Persona, Especialidad } = require('../models/main');
-
+const ProfesionalEspecialidad = require('../models/profesionalEspecialidad')
 
 exports.getProfesionalesConEspecialidades = async (req, res) => {
     try {
@@ -43,9 +43,14 @@ exports.renderEditarProfesional = async (req, res) => {
     if (typeof profesional.Persona.nacimiento === 'string') {
       profesional.Persona.nacimiento = new Date(profesional.Persona.nacimiento);
     }
+
+    const especialidades = await Especialidad.findAll({
+      attributes:['ID','nombre']
+    })
+
     //console.log(profesional)
     //res.json(profesional)
-    return res.render('editarProfesional', { profesional });
+    return res.render('editarProfesional', { profesional, especialidades });
   } catch (error) {
     console.error(error);
     return res.status(500).send('Error al cargar el profesional para edición');
@@ -54,33 +59,26 @@ exports.renderEditarProfesional = async (req, res) => {
 
 exports.editarProfesional = async (req, res) => {
   try {
-    const { id } = req.params.id;
-    const { nombre, dni, nacimiento, matricula, especialidades } = req.body;
+    const { id } = req.params;
+    const { nombre, dni, nacimiento } = req.body;
 
     // Encuentra el profesional junto con la persona asociada
-    const profesional = await Profesional.findByPk(id, { include: [{ model: Persona, as: 'persona' }] });
+    const profesional = await Profesional.findByPk(id, { include: [{ model: Persona }] });
 
     if (!profesional) {
       return res.status(404).send('Profesional no encontrado');
     }
 
     // Actualizar datos de Persona
-    await profesional.persona.update({ nombre, dni, nacimiento });
+    await profesional.Persona.update({ nombre, dni, nacimiento });
 
-    // Actualizar datos de Profesional (ej. matrícula)
-    await profesional.update({ matricula });
-
-    // Actualizar las especialidades del profesional
-    if (especialidades && especialidades.length) {
-      await profesional.setEspecialidades(especialidades);
-    }
-
-    return res.redirect('/api/profesionales');
+    return res.redirect('/lis/profesionales');
   } catch (error) {
-    console.error(error);
+    console.error('Error al actualizar el profesional:', error);
     return res.status(500).send('Error al actualizar el profesional');
   }
 };
+
 
 exports.actualizarEstado = async (req,res) => {
   const { profesionalID, estado } = req.body;
@@ -108,4 +106,49 @@ exports.renderCrear = async(req,res)=>{
   } catch (error) {
 
   }
+}
+
+exports.crearProfesional = async (req,res) => {
+  const { nombre, dni, nacimiento, especialidad, matricula }   = req.body;
+
+  try {
+    const nuevaPersona = await Persona.create({
+      nombre,dni,nacimiento
+    });
+    const nuevoProfesional= await Profesional.create({
+      personaID:nuevaPersona.ID
+    });
+
+    await ProfesionalEspecialidad.create({
+      profesionalID: nuevoProfesional.ID,
+      especialidadID: especialidad,matricula
+    })
+
+    res.redirect('/lis/profesionales')
+  } catch (error) {
+    console.error('Error al crear el profesional',error)
+    res.status(500).send('Error al crear el profesional');
+  }
+}
+
+exports.sumarEspecialidad = async (req, res) => {
+  const { especialidad, matricula } = req.body;
+  const profesionalID = req.params.id; // Asegúrate de que este id es correcto
+  try {
+    // Cambiar los nombres de las propiedades para que coincidan con los nombres de las columnas de la tabla intermedia
+    await ProfesionalEspecialidad.create({
+      especialidadID: especialidad, // Asegúrate de que esto sea el ID de la especialidad
+      profesionalID: profesionalID, // Esto es correcto
+      matricula: matricula // Esto es correcto
+    });
+    //window.alert('')
+    res.redirect(`/lis/edit/${profesionalID}`);
+  } catch (error) {
+    console.error('Error al añadir especialidad', error);
+    res.status(500).send('Error al añadir especialidad'); // Respuesta de error adecuada
+  }
+};
+
+exports.borrarEspecialidad = async(req,res) => {
+  
 }

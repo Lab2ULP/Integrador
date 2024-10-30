@@ -1,10 +1,41 @@
 extends layoutAdmin
 
 block content
- h1 editar Profesional
- form(action='/urleee', method='POST')
-   label(for='nombre') Nombre:
-   input(type='text', name='nombre', value=profesional.nombre, required,placeholder=`${profesional.Persona.nombre}`)
-   br
-   button(type='submit') Actualizar
- a(href='/api/personas') Volver a la lista
+  h1 Editar Profesional
+
+  form(action=`/lis/editar/${profesional.ID}`, method='POST')
+    //- Datos Personales
+    label(for='nombre') Nombre:
+    input(type='text', name='nombre', value=profesional.Persona.nombre, required placeholder='Ingrese el nombre')
+    br
+
+    label(for='dni') DNI:
+    input(type='text', name='dni', value=profesional.Persona.dni, required placeholder='Ingrese el DNI')
+    br
+
+    label(for='nacimiento') Fecha de Nacimiento:
+    input(type='date', name='nacimiento', value=profesional.Persona.nacimiento.toISOString().split('T')[0], required)
+    br
+
+    label Especialidades:
+      div
+        each especialidad in profesional.Especialidads
+          div
+            label= especialidad.nombre    
+            form(action="/lis/delete", method='POST')
+            button(type="submit") Eliminar  
+    //- Botones de acción
+    button(type='submit') Actualizar
+    a(href='/api/personas') Volver a la lista
+    br
+    br
+  form(action=`/lis/agregarEspecialidad/${profesional.ID}`, method="POST")
+    label(for='especialidad') Especialidad:
+      select(name='especialidad')
+        option(value='') Seleccione una especialidad
+        each especialidad in especialidades
+          option(value=especialidad.ID)= especialidad.nombre
+    br
+    label(for='matricula') Matrícula:
+    input(type='text', name='matricula',placeholder='Ingrese la matrícula')
+    button(type="submit") Agregar matricula
