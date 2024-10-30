@@ -6,13 +6,15 @@ const Persona = require('./persona')
 Profesional.belongsToMany(Especialidad, {
     through: 'especialidades_profesionales',
     foreignKey: 'profesionalID',
-    otherKey: 'especialidadID'
+    otherKey: 'especialidadID',
+    timestamps:false
 });
 
 Especialidad.belongsToMany(Profesional, {
     through: 'especialidades_profesionales',
     foreignKey: 'especialidadID',
-    otherKey: 'profesionalID'
+    otherKey: 'profesionalID',
+    timestamps:false
 });
 
 Profesional.belongsTo(Persona, { foreignKey: 'personaID' }); // Asume que la columna en Profesional es personaID

@@ -1,0 +1,10 @@
+extends layoutAdmin
+
+block content
+ h1 editar Profesional
+ form(action='/urleee', method='POST')
+   label(for='nombre') Nombre:
+   input(type='text', name='nombre', value=profesional.nombre, required,placeholder=`${profesional.Persona.nombre}`)
+   br
+   button(type='submit') Actualizar
+ a(href='/api/personas') Volver a la lista
