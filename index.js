@@ -8,7 +8,7 @@ const session = require('express-session')
 const authRoutes = require('./routes/authRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const pacienteRoutes = require('./routes/pacienteRoutes');
-//const pdnlRoutes = require('./routes/pdnlRoutes');
+const pdnlRoutes = require('./routes/pdnlRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -46,7 +46,7 @@ app.get('/',(req,res)=>{
 
 app.use('/auth',authRoutes);
 
-//app.use('/noLaborables', pdnlRoutes);
+app.use('/noLaborables', pdnlRoutes);
 
 
 // Sincronizar la base de datos y iniciar el servidor

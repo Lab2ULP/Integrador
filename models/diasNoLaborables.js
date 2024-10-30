@@ -1,9 +1,7 @@
 const { DataTypes } = require('sequelize');
-const db = require('../config/database');
-const Profesional = require('./profesional'); // Asegúrate de que el nombre del modelo coincida
-const ProfesionalDiasNoLaborables = require('./profesionalDiasNoLaborables'); // modelo intermedio
+const sequelize = require('../config/database');
 
-const DiasNoLaborables = db.define('dias_no_laborables', {
+const DiasNoLaborables = sequelize.define('DiasNoLaborables', {
     ID: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -16,14 +14,6 @@ const DiasNoLaborables = db.define('dias_no_laborables', {
 }, {
     tableName: 'dias_no_laborables',
     timestamps: false
-});
-
-// Relación muchos a muchos con Profesional
-DiasNoLaborables.belongsToMany(Profesional, {
-    through: ProfesionalDiasNoLaborables,
-    foreignKey: 'dia_no_laborablesID',  // Llave foránea en la tabla intermedia
-    otherKey: 'profesionalID',       // Llave foránea de Profesional en la tabla intermedia
-    as: 'profesionales'
 });
 
 module.exports = DiasNoLaborables;

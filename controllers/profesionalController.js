@@ -1,5 +1,4 @@
-const Persona = require('../models/persona');
-const Profesional = require('../models/profesional')
+const {Persona,Profesional} = require('../models/main');
 
 exports.crearProfesional = async(req,res)=>{
     try {

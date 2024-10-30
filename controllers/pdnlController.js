@@ -1,45 +1,43 @@
 // PROFESIONAL DIAS NO LABORABLES CONTROLADOR
-const Profesional = require('../models/profesional');
-const DiasNoLaborables = require('../models/diasNoLaborables');
-const ProfesionalDiasNoLaborables = require('../models/profesionalDiasNoLaborables');
+const { Profesional, DiasNoLaborables, ProfesionalDiasNoLaborables, Persona } = require('../models/main');
 
-// Agregar un día no laborable a un profesional (vacaciones, feriados o imprevisto)
 exports.addDiaNoLaborable = async (req, res) => {
   try {
-    const { profesionalID, dia_no_laborablesID, fecha } = req.body;
+    const { nombre, fecha, profesionalID } = req.body; // Suponiendo que envías el nombre, fecha y ID del profesional desde tu formulario
 
-    // Verifica si el profesional y el día no laborable existen
-    const profesional = await Profesional.findByPk(profesionalID);
-    const diaNoLaborable = await DiasNoLaborables.findByPk(dia_no_laborablesID);
+    // Crea un nuevo día no laborable
+    const nuevoDiaNoLaborable = await DiasNoLaborables.create({ nombre });
 
-    if (!profesional || !diaNoLaborable) {
-      return res.status(404).json({ error: 'Profesional o día no laborable no encontrado' });
-    }
+    // Agrega la relación en la tabla intermedia
+    await ProfesionalDiasNoLaborables.create({
+      profesionalID: profesionalID,
+      dia_no_laborablesID: nuevoDiaNoLaborable.ID,
+      fecha: fecha // Si estás almacenando la fecha en la tabla intermedia
+    });
 
-    // Crea la relación en la tabla intermedia
-    await ProfesionalDiasNoLaborables.create({ profesionalID, dia_no_laborablesID, fecha });
-
-    res.status(201).json({ message: 'Día no laborable agregado al profesional' });
+    // Redirige a la página donde se muestra la lista actualizada
+    res.redirect('agregardianl'); // Cambia esta ruta a la que corresponda
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al agregar día no laborable' });
+    console.error("Error al agregar el día no laborable:", error);
+    res.status(500).send("Error al agregar el día no laborable");
   }
 };
+
 
 // Eliminar un día no laborable de un profesional
 exports.removeDiaNoLaborable = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { ID } = req.params;
 
     // Verifica si la relación existe en la tabla intermedia
-    const relacion = await ProfesionalDiasNoLaborables.findByPk(id);
+    const profesionalDiasNoLaborables = await ProfesionalDiasNoLaborables.findByPk(ID);
 
-    if (!relacion) {
+    if (!profesionalDiasNoLaborables) {
       return res.status(404).json({ error: 'Relación no encontrada' });
     }
 
     // Elimina la relación
-    await relacion.destroy();
+    await profesionalDiasNoLaborables.destroy();
 
     res.status(200).json({ message: 'Día no laborable eliminado del profesional' });
   } catch (error) {
@@ -53,22 +51,32 @@ exports.getDiasNoLaborablesByProfesional = async (req, res) => {
   try {
     const { profesionalID } = req.params;
 
-    const profesional = await Profesional.findByPk(profesionalID, {
-      include: {
-        model: DiasNoLaborables,
-        through: {
-          attributes: ['fecha']
+    // Consulta que trae el profesional con sus días no laborables
+    const profesionalDiasNoLaborables = await Profesional.findByPk(profesionalID, {
+      include: [
+        {
+          model: DiasNoLaborables,
+          as: 'diasNoLaborables',
+          through: { attributes: ['fecha'] }, // Cambia 'fecha' si es diferente en tu tabla intermedia
+          attributes: ['ID', 'nombre']
+        },
+        {
+          model: Persona,
+          as: 'persona',
+          attributes:['nombre']
         }
-      }
+      ]
     });
 
-    if (!profesional) {
-      return res.status(404).json({ error: 'Profesional no encontrado' });
+    if (!profesionalDiasNoLaborables) {
+      return res.status(404).send('Profesional no encontrado');
     }
 
-    res.status(200).json(profesional);
+    // Renderiza la vista Pug con los datos del profesional
+    res.render('profesionaldnl', { profesionalDiasNoLaborables });
+  //res.json(profesionalDiasNoLaborables);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error al obtener días no laborables del profesional' });
+    res.status(500).send('Error al obtener los días no laborables del profesional');
   }
 };
