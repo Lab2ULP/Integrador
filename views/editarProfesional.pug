@@ -16,26 +16,29 @@ block content
     label(for='nacimiento') Fecha de Nacimiento:
     input(type='date', name='nacimiento', value=profesional.Persona.nacimiento.toISOString().split('T')[0], required)
     br
-
-    label Especialidades:
-      div
-        each especialidad in profesional.Especialidads
-          div
-            label= especialidad.nombre    
-            form(action="/lis/delete", method='POST')
-            button(type="submit") Eliminar  
-    //- Botones de acción
     button(type='submit') Actualizar
-    a(href='/api/personas') Volver a la lista
-    br
-    br
+
+    //- Lista de Especialidades
+  label Especialidades:
+    each especialidad in profesional.Especialidads
+      div
+        form(action="/lis/borrarEspecialidad", method='POST')
+          input(type='hidden', name='profesionalID', value=profesional.ID)
+          input(type='hidden', name='especialidadID', value=especialidad.ID)
+          label= especialidad.nombre    
+          button(type="submit") Eliminar  
+    //- Botón para actualizar
+
+  //- Formulario para agregar una nueva especialidad
   form(action=`/lis/agregarEspecialidad/${profesional.ID}`, method="POST")
     label(for='especialidad') Especialidad:
-      select(name='especialidad')
-        option(value='') Seleccione una especialidad
-        each especialidad in especialidades
-          option(value=especialidad.ID)= especialidad.nombre
+    select(name='especialidad')
+      option(value='') Seleccione una especialidad
+      each especialidad in especialidades
+        option(value=especialidad.ID)= especialidad.nombre
     br
     label(for='matricula') Matrícula:
-    input(type='text', name='matricula',placeholder='Ingrese la matrícula')
-    button(type="submit") Agregar matricula
+    input(type='text', name='matricula', placeholder='Ingrese la matrícula', required)
+    button(type="submit") Agregar especialidad
+    br
+  a(href='/api/personas') Volver a la lista

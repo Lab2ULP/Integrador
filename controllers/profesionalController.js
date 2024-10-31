@@ -149,6 +149,21 @@ exports.sumarEspecialidad = async (req, res) => {
   }
 };
 
-exports.borrarEspecialidad = async(req,res) => {
-  
-}
+exports.borrarEspecialidad = async (req, res) => {
+  const { profesionalID, especialidadID } = req.body;
+
+  try {
+    // Busca y elimina la relación donde coincidan ambos IDs
+    await ProfesionalEspecialidad.destroy({
+      where: {
+        profesionalID: profesionalID,
+        especialidadID: especialidadID
+      }
+    });
+
+    res.redirect(`/lis/edit/${profesionalID}`);
+  } catch (error) {
+    console.error('Error al eliminar la especialidad del profesional:', error);
+    res.status(500).send('Error al eliminar la especialidad del profesional');
+  }
+};
