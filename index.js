@@ -10,6 +10,7 @@ const usuarioRoutes = require('./routes/usuarioRoutes');
 const pacienteRoutes = require('./routes/pacienteRoutes');
 const pdnlRoutes = require('./routes/pdnlRoutes');
 
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -19,6 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // Para parsear formularios 
 
 // Servir archivos estáticos (CSS, imágenes, etc.)
 app.use(express.static(path.join(__dirname, 'public'))); // Asegúrate de tener una carpeta public para tus estilos
+
 
 //configuracion de la sesion
 app.use(session({

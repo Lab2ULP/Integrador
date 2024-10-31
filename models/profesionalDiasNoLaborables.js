@@ -9,6 +9,9 @@ const ProfesionalDiasNoLaborables = sequelize.define('ProfesionalDiasNoLaborable
     primaryKey: true,
     autoIncrement: true
   },
+  nombre: {
+    type: DataTypes.STRING(20),
+  },
   profesionalID: {
     type: DataTypes.INTEGER,
     references: {

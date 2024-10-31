@@ -1,27 +1,55 @@
 doctype html
 html
   head
-    title Lista de Días No Laborables
+    title Lista de Profesionales y Días No Laborables
     // Puedes incluir aquí cualquier estilo CSS o scripts necesarios
+    script.
+      function eliminarDiaNoLaborable(id) {
+        // Hacer la solicitud DELETE al servidor
+        fetch(`/api/profesional_dias_no_laborables/remove/${id}`, {
+          method: 'DELETE'
+        })
+        .then(response => {
+          if (response.ok) {
+            // Si la eliminación es exitosa, recargar la página o eliminar la fila
+            location.reload(); // Recarga la página para reflejar los cambios
+          } else {
+            // Manejo de errores
+            alert('Error al eliminar el día no laborable');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error al eliminar el día no laborable');
+        });
+      }
 
   body
-    h1 Lista de Días No Laborables por Profesional
+    h1 Lista de Profesionales y sus Fechas de Días No Laborables
     
     table
       thead
         tr
           th Nombre del Profesional
-          th Día No Laborable
           th Fecha
           th Acciones
       tbody
-        each dia in profesionalDiasNoLaborables.diasNoLaborables
-          tr
-            // Mostramos el ID y el nombre del profesional
-            td= profesionalDiasNoLaborables.persona.nombre
-            td= dia.nombre 
-            td= dia.ProfesionalDiasNoLaborables.fecha ? new Date(dia.ProfesionalDiasNoLaborables.fecha).toISOString().substring(0, 10) : 'Fecha no disponible'
-            td
-              a(href=`/api/profesional_dias_no_laborables/${dia.ID}`) Ver
-              a(href=`/api/profesional_dias_no_laborables/editar/${dia.ID}`) Editar
-              a(href=`/api/profesional_dias_no_laborables/borrar/${dia.ID}`) Eliminar
+        // Iteramos sobre cada profesional
+        each profesional in profesionalDiasNoLaborables
+          // Comprobamos si diasNoLaborables está definido y tiene longitud
+          if profesional.diasNoLaborables && profesional.diasNoLaborables.length > 0
+            each dia in profesional.diasNoLaborables
+              tr
+                // Mostramos el nombre del profesional
+                td= profesional.persona.nombre
+                // Mostramos la fecha, si está disponible
+                td= dia.ProfesionalDiasNoLaborables.fecha ? new Date(dia.ProfesionalDiasNoLaborables.fecha).toISOString().substring(0, 10) : 'Fecha no disponible'
+                // Botón de eliminar
+                td
+                  button(onclick=`eliminarDiaNoLaborable(${dia.ProfesionalDiasNoLaborables.ID})`) Eliminar
+          else
+            // Si no tiene días no laborables, mostramos el nombre del profesional y un mensaje
+            tr
+              td= profesional.persona.nombre
+              td Fecha no disponible
+              td No hay acciones
