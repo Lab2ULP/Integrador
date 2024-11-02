@@ -3,6 +3,7 @@ const sequelize = require('../config/database');
 const Profesional = require('./profesional');
 const DiasNoLaborables = require('./diasNoLaborables');
 
+// Definición del modelo ProfesionalDiasNoLaborables
 const ProfesionalDiasNoLaborables = sequelize.define('ProfesionalDiasNoLaborables', {
   ID: {
     type: DataTypes.INTEGER,
@@ -34,5 +35,6 @@ const ProfesionalDiasNoLaborables = sequelize.define('ProfesionalDiasNoLaborable
   tableName: 'profesional_dias_no_laborables',
   timestamps: false
 });
+
 
 module.exports = ProfesionalDiasNoLaborables;
