@@ -19,6 +19,8 @@ exports.crearUsuario = async (req, res) => {
     res.redirect('/'); // Redirige al usuario al inicio o a la página que prefieras
   } catch (error) {
     console.error(error);
+
     res.status(500).send('Error al crear el Usuario');
+
   }
 };
