@@ -11,6 +11,7 @@ const pacienteRoutes = require('./routes/pacienteRoutes');
 const pdnlRoutes = require('./routes/pdnlRoutes');
 const profesionalRoutes = require('./routes/profesionalRoutes');
 
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -36,6 +37,12 @@ app.set('views', path.join(__dirname, 'views')); // Ruta a la carpeta de vistas
 
 
 app.use('/usuarios', usuarioRoutes);
+
+app.use('/pacientes',pacienteRoutes);
+
+
+
+app.use('/lis', profesionalRoutes); // Prefijo '/api' (opcional)
 
 app.use('/pacientes',pacienteRoutes);
 

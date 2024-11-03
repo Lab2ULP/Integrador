@@ -1,0 +1,30 @@
+extends layoutAdmin
+
+block content
+  h1 Cargar Nuevo Profesional
+  form(action='/lis/crear', method='POST')
+    label(for='nombre') Nombre:
+    input(type='text', name='nombre', required, placeholder='Ingrese el nombre del profesional')
+    br
+
+    label(for='dni') DNI:
+    input(type='text', name='dni', required, placeholder='Ingrese el DNI del profesional')
+    br
+
+    label(for='nacimiento') Fecha de Nacimiento:
+    input(type='date', name='nacimiento', required)
+    br
+
+    label(for='especialidad') Especialidad:
+    select(name='especialidad', required)
+      option(value='') Seleccione una especialidad
+      each especialidad in especialidades
+        option(value=especialidad.ID)= especialidad.nombre
+    br
+
+    label(for='matricula') Matrícula:
+    input(type='text', name='matricula', required, placeholder='Ingrese la matrícula del profesional')
+    br
+
+    button(type='submit') Guardar Profesional
+    a(href='/api/personas') Volver a la lista

@@ -1,0 +1,24 @@
+extends layoutAdmin
+
+block content
+  h1 Lista de Médicos con Especialidades
+  table
+    thead
+      tr
+        th Nombre
+        th Especialidades
+    tbody
+      each medico in profesionales
+        tr
+          td= medico.Persona.nombre
+          td
+            ul
+              each especialidad in medico.Especialidads 
+                li= especialidad.nombre
+          td 
+            form(action="/lis/statechange", method="post") 
+             input(type="hidden", name="profesionalID", value=medico.ID)
+             input(type="hidden", name="estado", value = medico.estado ? '0' : '1')
+             button(type="submit")= medico.estado ? 'Desactivar' : 'Activar' 
+            a(href=`/lis/edit/${medico.ID}`) Editar
+  a.btn(href='/lis/crear') Crear profesional

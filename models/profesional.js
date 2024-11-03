@@ -20,4 +20,5 @@ const Profesional = sequelize.define('Profesional', {
     timestamps: false,
 });
 
-module.exports = Profesional;
+module.exports = Profesional;
+
