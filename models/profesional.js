@@ -21,3 +21,4 @@ const Profesional = sequelize.define('Profesional', {
 });
 
 module.exports = Profesional;
+

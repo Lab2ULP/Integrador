@@ -8,6 +8,8 @@ const Dia = require('./dia');
 const AgendaDia = require('./agendaDia'); // Importar el nuevo modelo
 const Clasificacion = require('./clasificacion'); // Importar el modelo Clasificacion
 const AgendaClasificacion = require('./agendaClasificacion'); // Importar el nuevo modelo
+const ProfesionalDiasNoLaborables = require('./profesionalDiasNoLaborables')
+const DiasNoLaborables = require('./diasNoLaborables');
 
 // Definir las relaciones muchos a muchos en un lugar central
 Profesional.belongsToMany(Especialidad, {
@@ -31,6 +33,8 @@ Agenda.belongsTo(ProfesionalEspecialidad, { foreignKey: 'prof_especialidadID' })
 Agenda.belongsTo(Sucursal, { foreignKey: 'sucursalID' });
 
 Profesional.belongsTo(Persona, { foreignKey: 'personaID' }); // Asume que la columna en Profesional es personaID
+ProfesionalDiasNoLaborables.belongsTo(Profesional, { foreignKey: 'profesionalID'});
+ProfesionalDiasNoLaborables.belongsTo(DiasNoLaborables, { foreignKey: 'dia_no_laborablesID'});
 
 // Definir las relaciones muchos a muchos
 Agenda.belongsToMany(Dia, {
@@ -61,6 +65,20 @@ Clasificacion.belongsToMany(Agenda, {
     timestamps: false
 });
 
+Profesional.belongsToMany(DiasNoLaborables, {
+  through: 'profesional_dias_no_laborables',
+  foreignKey: 'profesionalID',
+  otherKey: 'dia_no_laborablesID',
+  timestamps:false
+});
+
+DiasNoLaborables.belongsToMany(Profesional, {
+  through: 'profesional_dias_no_laborables',
+  foreignKey: 'dia_no_laborablesID',
+  otherKey: 'profesionalID',
+  timestamps:false
+});
+
 module.exports = {
     Profesional,
     Especialidad,
@@ -71,5 +89,8 @@ module.exports = {
     Dia,
     AgendaDia,
     Clasificacion,
-    AgendaClasificacion
+    AgendaClasificacion,
+    ProfesionalDiasNoLaborables,
+    DiasNoLaborables
 };
+

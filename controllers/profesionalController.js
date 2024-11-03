@@ -1,6 +1,7 @@
-// Importamos todos los modelos desde el archivo principal
-const { Profesional, Persona, Especialidad } = require('../models/main');
+const {Persona,Profesional,DiasNoLaborables,ProfesionalDiasNoLaborables,Especialidad} = require('../models/main');
 const ProfesionalEspecialidad = require('../models/profesionalEspecialidad')
+//const ProfesionalDiasNoLaborables = require('../models/profesionalDiasNoLaborables')
+
 
 exports.getProfesionalesConEspecialidades = async (req, res) => {
     try {
@@ -128,6 +129,40 @@ exports.crearProfesional = async (req,res) => {
   } catch (error) {
     console.error('Error al crear el profesional',error)
     res.status(500).send('Error al crear el profesional');
+
+    };
+}
+
+exports.getAllProfesionalDiasNoLaborables = async (req, res) => {
+    try {
+      const noLaborablesDias = await ProfesionalDiasNoLaborables.findAll({
+        attributes: ['ID', 'nombre', 'profesionalID', 'dia_no_laborablesID', 'fecha'],
+        include: [
+          {
+            model: Profesional,
+            attributes: ['ID', 'personaID'],
+            include: [
+              {
+                model: Persona,
+                attributes: ['ID', 'nombre']  // Agrega otros atributos de Persona que necesites
+              }
+            ]
+          },
+          {
+            model: DiasNoLaborables,
+            attributes: ['ID', 'nombre']  // Agrega otros atributos de DiasNoLaborables si son necesarios
+          }
+        ]
+      });
+  //res.json(diasNoLaborables[0].Profesional.Persona.nombre);
+      res.render('profesionaldnl',{noLaborablesDias});
+    } catch (error) {
+      console.error('Error al obtener los días no laborables:', error);
+      res.status(500).send('Error al obtener los días no laborables');
+    }
+  };
+  
+
   }
 }
 
@@ -167,3 +202,4 @@ exports.borrarEspecialidad = async (req, res) => {
     res.status(500).send('Error al eliminar la especialidad del profesional');
   }
 };
+
