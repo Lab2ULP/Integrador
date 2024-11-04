@@ -160,11 +160,7 @@ exports.getAllProfesionalDiasNoLaborables = async (req, res) => {
       console.error('Error al obtener los días no laborables:', error);
       res.status(500).send('Error al obtener los días no laborables');
     }
-  };
-  
-
-  }
-}
+};
 
 exports.sumarEspecialidad = async (req, res) => {
   const { especialidad, matricula } = req.body;

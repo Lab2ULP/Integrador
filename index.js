@@ -2,9 +2,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path'); // Para servir archivos estáticos
-const personaRoutes = require('./routes/personaRoutes');
 const sequelize = require('./config/database'); // Asegúrate de que la ruta a tu archivo de configuración de la base de datos sea correcta
 const session = require('express-session')
+
+const personaRoutes = require('./routes/personaRoutes');
 const authRoutes = require('./routes/authRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const pacienteRoutes = require('./routes/pacienteRoutes');
@@ -40,11 +41,7 @@ app.use('/usuarios', usuarioRoutes);
 
 app.use('/pacientes',pacienteRoutes);
 
-
-
 app.use('/lis', profesionalRoutes); // Prefijo '/api' (opcional)
-
-app.use('/pacientes',pacienteRoutes);
 
 // Rutas
 app.use('/api/personas', personaRoutes); // Todas las rutas de personas se agrupan bajo /api/personas
@@ -57,7 +54,7 @@ app.use('/auth',authRoutes);
 
 app.use('/noLaborables', pdnlRoutes);
 
-app.use('/noLaborablesLista', profesionalRoutes);
+app.use('/profesionales', profesionalRoutes);
 
 // Sincronizar la base de datos y iniciar el servidor
 sequelize.sync().then(() => {

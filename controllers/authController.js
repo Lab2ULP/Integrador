@@ -25,7 +25,7 @@ exports.iniciarSesion = async (req, res) => {
     // Renderizar vistas según el rol
 
     if (usuario.rolID == 1) {
-      res.redirect('/lis/profesionales');
+      res.redirect('/profesionales/lista');
     } else if (usuario.rolID == 2) {
       res.render('secretarioPrincipal');
     } else {
