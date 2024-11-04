@@ -1,0 +1,38 @@
+doctype html
+html
+  head
+    title Lista de Profesionales y Días No Laborables
+    style.
+      table, th, td {
+        border: 1px solid black;
+        padding: 8px;
+      }
+      button {
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+  
+  body
+    h1 Profesionales - Fecha No Laboral
+    
+    table
+      thead
+        tr
+          th Nombre 
+          th Motivo
+          th Fecha
+          th Acciones
+      tbody
+        each dia in noLaborablesDias
+          tr
+            td= dia.Profesional.Persona.nombre
+            td= dia.DiasNoLaborable.nombre
+            td= dia.fecha ? new Date(dia.fecha).toISOString().substring(0, 10) : 'Fecha no disponible'
+            td
+              form(action='/noLaborables/remove', method='POST')
+                input(type='hidden', name='ID', value=dia.ID)
+                button(type='submit') Eliminar
+    a(href="/noLaborables/agregar") Agregar un dia no laborable           

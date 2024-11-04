@@ -2,12 +2,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path'); // Para servir archivos estáticos
-const personaRoutes = require('./routes/personaRoutes');
 const sequelize = require('./config/database'); // Asegúrate de que la ruta a tu archivo de configuración de la base de datos sea correcta
 const session = require('express-session')
+
+const personaRoutes = require('./routes/personaRoutes');
 const authRoutes = require('./routes/authRoutes');
-const usuarioRoutes = require('./routes/usuarioRoutes')
-const pacienteRoutes = require('./routes/pacienteRoutes')
+const usuarioRoutes = require('./routes/usuarioRoutes');
+const pacienteRoutes = require('./routes/pacienteRoutes');
+const pdnlRoutes = require('./routes/pdnlRoutes');
 const profesionalRoutes = require('./routes/profesionalRoutes');
 
 
@@ -20,6 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // Para parsear formularios 
 
 // Servir archivos estáticos (CSS, imágenes, etc.)
 app.use(express.static(path.join(__dirname, 'public'))); // Asegúrate de tener una carpeta public para tus estilos
+
 
 //configuracion de la sesion
 app.use(session({
@@ -40,7 +43,6 @@ app.use('/pacientes',pacienteRoutes);
 
 app.use('/lis', profesionalRoutes); // Prefijo '/api' (opcional)
 
-app.use('/pacientes',pacienteRoutes);
 // Rutas
 app.use('/api/personas', personaRoutes); // Todas las rutas de personas se agrupan bajo /api/personas
 
@@ -50,6 +52,9 @@ app.get('/',(req,res)=>{
 
 app.use('/auth',authRoutes);
 
+app.use('/noLaborables', pdnlRoutes);
+
+app.use('/profesionales', profesionalRoutes);
 
 // Sincronizar la base de datos y iniciar el servidor
 sequelize.sync().then(() => {

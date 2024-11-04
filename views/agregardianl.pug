@@ -1,0 +1,25 @@
+// PROFESIONAL DIAS NO LABORABLES VISTA AGREGAR
+doctype html
+html
+  head
+    title Agregar Día No Laborable
+  body
+    h1 Agregar Día No Laborable
+    form(action="/noLaborables/add" method="POST")
+      label(for="nombre") Nombre: 
+      input(type="text" name="nombre" required)
+      
+      label(for="profesionalID") Profesional:
+      select(name="profesionalID", required)
+        each profesional in profesionales
+          option(value=profesional.ID)= profesional.Persona.nombre 
+          
+      label(for="diaNoLaborableID") Tipo de Día No Laborable:
+      select(name="diaNoLaborableID", required)
+        option(value="1") Feriados
+        option(value="2") Vacaciones
+        option(value="3") Imprevistos
+
+      label(for="fecha") Fecha:
+      input(type="date" name="fecha" required)
+      button(type="submit") Agregar Día No Laborable
