@@ -49,7 +49,7 @@ exports.addDiaNoLaborable = async (req, res) => {
     console.log("Nuevo día no laborable creado:", nuevoDiaNoLaborable);
 
     // Envía una respuesta de éxito
-    res.redirect('/noLaborablesLista/profesionales');
+    res.redirect('/profesionales/profesionalesDnl');
   //  res.status(201).json({ message: 'Día no laborable agregado correctamente', nuevoDiaNoLaborable });
   } catch (error) {
     console.error("Error al agregar día no laborable:", error);
@@ -84,7 +84,7 @@ exports.removeDiaNoLaborable = async (req, res) => {
     }
 
     console.log('Registro eliminado exitosamente para el ID:', ID);
-    res.redirect('/noLaborablesLista/profesionales'); // Redirigir a la página actualizada después de la eliminación
+    res.redirect('/profesionales/profesionalesDnl'); // Redirigir a la página actualizada después de la eliminación
   } catch (error) {
     console.error('Error al eliminar el registro:', error);
     res.status(500).json({ error: 'Error al eliminar el registro' });
