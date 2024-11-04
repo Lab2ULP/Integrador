@@ -11,7 +11,7 @@ const usuarioRoutes = require('./routes/usuarioRoutes');
 const pacienteRoutes = require('./routes/pacienteRoutes');
 const pdnlRoutes = require('./routes/pdnlRoutes');
 const profesionalRoutes = require('./routes/profesionalRoutes');
-
+const diasAgendaRoutes = require('./routes/diasAgendaRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -55,6 +55,8 @@ app.use('/auth',authRoutes);
 app.use('/noLaborables', pdnlRoutes);
 
 app.use('/profesionales', profesionalRoutes);
+
+app.use('/diasAgenda', diasAgendaRoutes);
 
 // Sincronizar la base de datos y iniciar el servidor
 sequelize.sync().then(() => {
