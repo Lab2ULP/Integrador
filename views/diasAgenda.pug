@@ -1,54 +1,70 @@
-extends layoutAdmin
+doctype html
+html
+  head
+    title Gestión de Días y Agendas
+    style.
+      table, th, td {
+        border: 1px solid black;
+        padding: 8px;
+      }
+      button {
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
 
-block content
-  h1 Gestión de Días y Agendas
+  body
+    h1 Gestión de Días y Agendas
 
-  //- Formulario para agregar un nuevo registro
-  form(method="POST" action="/agregar" class="form-agregar")
-    h2 Agregar Nuevo Día de Agenda
-    .form-group
-      label(for="agendaID") Agenda ID
-      input(type="number" name="agendaID" required placeholder="ID de la agenda")
-    .form-group
-      label(for="diaID") Día ID
-      input(type="number" name="diaID" required placeholder="ID del día")
-    .form-group
-      label(for="hora_inicio") Hora Inicio
-      input(type="time" name="hora_inicio" required placeholder="HH:MM")
-    .form-group
-      label(for="hora_final") Hora Final
-      input(type="time" name="hora_final" required placeholder="HH:MM")
-    button(type="submit") Agregar Día de Agenda
+    form(method="POST" action="/agregar" class="form-agregar")
+      h2 Agregar Nuevo Día de Agenda
+      .form-group
+        label(for="agendaID") Agenda ID
+        input(type="number" name="agendaID" required placeholder="ID de la agenda")
+      .form-group
+        label(for="diaID") Día ID
+        input(type="number" name="diaID" required placeholder="ID del día")
+      .form-group
+        label(for="hora_inicio") Hora Inicio
+        input(type="time" name="hora_inicio" required placeholder="HH:MM")
+      .form-group
+        label(for="hora_final") Hora Final
+        input(type="time" name="hora_final" required placeholder="HH:MM")
+      button(type="submit") Agregar Día de Agenda
 
-  hr
+    hr
 
-  //- Tabla para mostrar los registros existentes de dias_agendas
-  h2 Lista de Días y Agendas
-  table
-    thead
-      tr
-        th ID
-        th Agenda ID
-        th Día ID
-        th Hora Inicio
-        th Hora Final
-        th Acciones
-    tbody
-      each diaAgenda in diasAgendas
+    h2 Lista de Días y Agendas
+    table
+      thead
         tr
-          td= diaAgenda.id
-          td= diaAgenda.agendaID
-          td= diaAgenda.diaID
-          td= diaAgenda.hora_inicio
-          td= diaAgenda.hora_final
-          //- Botón para editar el registro (redirige a un formulario de actualización)
-          td
-            form(method="POST" action=`/actualizar/${diaAgenda.id}?_method=PUT`)
-              input(type="hidden" name="agendaID" value=diaAgenda.agendaID)
-              input(type="hidden" name="diaID" value=diaAgenda.diaID)
-              input(type="time" name="hora_inicio" value=diaAgenda.hora_inicio)
-              input(type="time" name="hora_final" value=diaAgenda.hora_final)
-              button(type="submit") Actualizar
-            //- Botón para eliminar el registro
-            form(method="POST" action=`/eliminar/${diaAgenda.id}?_method=DELETE`)
-              button(type="submit") Eliminar
+          th ID
+          th Agenda ID
+          th Día ID
+          th Hora Inicio
+          th Hora Final
+          th Acciones
+      tbody
+        each diaAgenda in diasAgendas
+          tr
+            td= diaAgenda.id
+            td= diaAgenda.agendaID
+            td= diaAgenda.diaID
+            td= diaAgenda.hora_inicio
+            td= diaAgenda.hora_final
+            td
+              form(action='/diasAgenda/actualizar', method='POST')
+                input(type='hidden', name='ID', value=diaAgenda.id)
+                input(type='hidden', name='agendaID', value=diaAgenda.agendaID)
+                input(type='hidden', name='diaID', value=diaAgenda.diaID)
+                input(type='time', name='hora_inicio', value=diaAgenda.hora_inicio)
+                input(type='time', name='hora_final', value=diaAgenda.hora_final)
+                button(type='submit') Actualizar
+
+              // Formulario para eliminar
+              form(action='/diasAgenda/eliminar', method='POST')
+                input(type='hidden', name='ID', value=diaAgenda.id)
+                button(type='submit') Eliminar
+    a(href="/diasAgenda/agregar") Agregar un Día de Agenda
