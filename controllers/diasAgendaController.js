@@ -18,56 +18,62 @@ exports.obtenerTodosDiasAgendas = async (req, res) => {
 
 // Controlador para manejar CRUD en dias_agendas
 exports.agregarDiaAgenda = async (req, res) => {
-    try {
+  try {
       const { agendaID, diaID, hora_inicio, hora_final } = req.body;
       
       // Validación de datos
       if (!agendaID || !diaID || !hora_inicio || !hora_final) {
-        return res.status(400).json({ error: "Todos los campos son obligatorios" });
+          return res.status(400).json({ error: "Todos los campos son obligatorios" });
       }
-  
+
+      // Inserción en la base de datos usando Sequelize
       const nuevoDiaAgenda = await AgendaDia.create({
-        agendaID,
-        diaID,
-        hora_inicio,
-        hora_final
+          agendaID: agendaID,
+          diaID: diaID,
+          hora_inicio: hora_inicio,
+          hora_final: hora_final
       });
-  
-      res.json(nuevoDiaAgenda);
-    //  res.render('diasAgenda', { nuevoDiaAgenda });
-    } catch (error) {
+
+      // Retornar el nuevo registro creado
+     // res.json(nuevoDiaAgenda);
+      res.redirect('/diasAgenda/todos');
+  } catch (error) {
       console.error("Error al agregar un registro en dias_agendas:", error);
       res.status(500).json({ error: "Error interno del servidor" });
-    }
-  };
+  }
+};
+
   
   // Función para actualizar un registro existente en dias_agendas
   exports.actualizarDiaAgenda = async (req, res) => {
     try {
-      const { ID } = req.body;
-      const { agendaID, diaID, hora_inicio, hora_final } = req.body;
+
+      const { ID, diaID, hora_inicio, hora_final } = req.body;
   
-      // Realiza la actualización directamente en la base de datos
-      const actualizacion = await AgendaDia.update(
+      if (!ID) {
+        console.log("No se proporcionó un ID");
+        return res.status(400).json({ error: "ID no proporcionado" });
+      }
+  
+      // Realizar la actualización en la base de datos
+      await AgendaDia.update(
         {
-          agendaID,
-          diaID,
-          hora_inicio,
-          hora_final
+          "diaID":diaID,
+          "hora_inicio":hora_inicio,
+          "hora_final":hora_final
         },
         {
-          where: { ID }
+          where: { ID } // Asegúrate de que este sea el ID correcto
         }
       );
-  
-        res.json(actualizacion); // Devuelve la estructura del resultado
+
+         res.redirect('/diasAgenda/todos');
+      
     } catch (error) {
       console.error("Error al actualizar un registro en dias_agendas:", error);
       res.status(500).json({ error: "Error interno del servidor" });
     }
   };
-  
-  
   
   
   // Función para eliminar un registro en dias_agendas
