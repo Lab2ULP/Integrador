@@ -1,0 +1,28 @@
+extends layoutAdmin
+
+block content
+  h1 Listado de Clasificaciones
+
+  table
+    thead
+      tr
+        th ID
+        th Nombre
+        th Acciones
+    tbody
+      each clasificacion in clasificaciones
+        tr
+          td= clasificacion.ID
+          td= clasificacion.nombre
+          td
+            button(onclick=`document.getElementById('edit-${clasificacion.ID}').style.display='block'`) Editar
+            // Formulario de edición oculto por defecto
+            form(id=`edit-${clasificacion.ID}`, style='display:none', method='POST', action=`/clasificaciones/editar/${clasificacion.ID}`)
+              input(type='text', name='nombre', value=clasificacion.nombre)
+              button(type='submit') Guardar
+          
+  // Formulario para agregar nueva clasificación
+  h2 Agregar Nueva Clasificación
+  form(method='POST', action='/clasificaciones/agregar')
+    input(type='text', name='nombre', placeholder='Nombre de la clasificación', required)
+    button(type='submit') Agregar

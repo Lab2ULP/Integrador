@@ -11,7 +11,8 @@ const usuarioRoutes = require('./routes/usuarioRoutes');
 const pacienteRoutes = require('./routes/pacienteRoutes');
 const pdnlRoutes = require('./routes/pdnlRoutes');
 const profesionalRoutes = require('./routes/profesionalRoutes');
-
+const agendaRoutes = require('./routes/agendaRoutes')
+const clasificacionRoutes = require('./routes/clasificacionRoutes')
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -41,7 +42,6 @@ app.use('/usuarios', usuarioRoutes);
 
 app.use('/pacientes',pacienteRoutes);
 
-app.use('/lis', profesionalRoutes); // Prefijo '/api' (opcional)
 
 // Rutas
 app.use('/api/personas', personaRoutes); // Todas las rutas de personas se agrupan bajo /api/personas
@@ -50,11 +50,15 @@ app.get('/',(req,res)=>{
   res.render('login')
 })
 
+app.use('/clasificaciones',clasificacionRoutes)
+
 app.use('/auth',authRoutes);
 
 app.use('/noLaborables', pdnlRoutes);
 
 app.use('/profesionales', profesionalRoutes);
+
+app.use('/secretario', agendaRoutes)
 
 // Sincronizar la base de datos y iniciar el servidor
 sequelize.sync().then(() => {
