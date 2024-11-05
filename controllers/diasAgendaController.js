@@ -45,6 +45,7 @@ exports.agregarDiaAgenda = async (req, res) => {
       // Si ya existe un registro con las mismas horas, devolver un error
       if (existente) {
           return res.status(400).json({ error: "Ya existe un registro para esta agenda y día en el mismo rango de horas" });
+
       }
 
       // Inserción en la base de datos usando Sequelize

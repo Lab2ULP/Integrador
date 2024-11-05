@@ -1,25 +1,6 @@
-doctype html
-html
-  head
-    title Gestión de Días y Agendas
-    style.
-      table, th, td {
-        border: 1px solid black;
-        padding: 8px;
-      }
-      button {
-        background-color: #ff4d4d;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-      }
+extends layoutAdmin
 
-      input[disabled] {
-        background-color: #f0f0f0; 
-      }
-
-  body
+block content
     h1 Gestión de Días y Agendas
 
     form(method="POST" action="/diasAgenda/agregar" class="form-agregar")
