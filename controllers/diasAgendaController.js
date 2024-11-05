@@ -1,6 +1,6 @@
 const { Agenda, Dia, ProfesionalEspecialidad } = require ('../models/main');
 const AgendaDia = require ('../models/agendaDia');
-
+const { Op } = require('sequelize');
 
 exports.obtenerTodosDiasAgendas = async (req, res) => {
   try {
@@ -26,6 +26,27 @@ exports.agregarDiaAgenda = async (req, res) => {
           return res.status(400).json({ error: "Todos los campos son obligatorios" });
       }
 
+      // Verificar si ya existe un registro con la misma agendaID y diaID
+      const existente = await AgendaDia.findOne({
+          where: {
+              agendaID: agendaID,
+              diaID: diaID,
+              [Op.or]: [
+                  {
+                      hora_inicio: hora_inicio
+                  },
+                  {
+                      hora_final: hora_final
+                  }
+              ]
+          }
+      });
+
+      // Si ya existe un registro con las mismas horas, devolver un error
+      if (existente) {
+          return res.status(400).json({ error: "Ya existe un registro para esta agenda y día en el mismo rango de horas" });
+      }
+
       // Inserción en la base de datos usando Sequelize
       const nuevoDiaAgenda = await AgendaDia.create({
           agendaID: agendaID,
@@ -34,8 +55,7 @@ exports.agregarDiaAgenda = async (req, res) => {
           hora_final: hora_final
       });
 
-      // Retornar el nuevo registro creado
-     // res.json(nuevoDiaAgenda);
+      // Redireccionar a la lista de días y agendas
       res.redirect('/diasAgenda/todos');
   } catch (error) {
       console.error("Error al agregar un registro en dias_agendas:", error);
