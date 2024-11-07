@@ -1,0 +1,69 @@
+extends layoutAdmin
+
+block content
+    h1 Gestión de Días y Agendas
+
+    form(method="POST" action="/diasAgenda/agregar" class="form-agregar")
+      h2 Agregar Nuevo Día de Agenda
+      .form-group
+        label(for="agendaID") Agenda ID
+        input(type="number" name="agendaID" required placeholder="ID de la agenda")
+      .form-group
+        label(for="diaID") Día ID
+        input(type="number" name="diaID" required placeholder="ID del día")
+      .form-group
+        label(for="hora_inicio") Hora Inicio
+        input(type="time" name="hora_inicio" required placeholder="HH:MM")
+      .form-group
+        label(for="hora_final") Hora Final
+        input(type="time" name="hora_final" required placeholder="HH:MM")
+      button(type="submit") Agregar Día de Agenda
+
+    hr
+
+    h2 Lista de Días y Agendas
+    table
+      thead
+        tr
+          th ID
+          th Agenda ID
+          th Día ID
+          th Hora Inicio
+          th Hora Final
+          th Acciones
+      tbody
+        each diaAgenda in diasAgendas
+          tr(data-id=diaAgenda.ID)
+            td= diaAgenda.ID
+            td(data-field="agendaID")= diaAgenda.agendaID
+            td(data-field="diaID")= diaAgenda.diaID
+            td(data-field="hora_inicio")= diaAgenda.hora_inicio
+            td(data-field="hora_final")= diaAgenda.hora_final
+            td
+              form(action="/diasAgenda/actualizar", method="POST")
+                input(type="hidden" name="ID" value=diaAgenda.ID)
+                label(for="diaID") Día ID:
+                input(type="number" name="diaID" value=diaAgenda.diaID required disabled)
+                label(for="hora_inicio") Hora Inicio:
+                input(type="time" name="hora_inicio" value=diaAgenda.hora_inicio required disabled)
+                label(for="hora_final") Hora Final:
+                input(type="time" name="hora_final" value=diaAgenda.hora_final required disabled)
+                button(type="button" onclick=`habilitarEdicion(${diaAgenda.ID})`) Actualizar
+                button(type="submit" disabled) Confirmar Actualización
+              form(action='/diasAgenda/eliminar', method='POST')
+                input(type='hidden', name='ID', value=diaAgenda.ID)
+                button(type='submit') Eliminar
+
+    script.
+      function habilitarEdicion(ID) {
+        const fila = document.querySelector(`tr[data-id="${ID}"]`);
+
+        const inputs = fila.querySelectorAll('input[type="number"], input[type="time"]');
+        inputs.forEach(input => {
+          input.disabled = false; 
+        });
+
+        
+        const confirmButton = fila.querySelector('button[type="submit"]');
+        confirmButton.disabled = false;
+      }

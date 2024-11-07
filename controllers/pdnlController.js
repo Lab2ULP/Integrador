@@ -50,7 +50,7 @@ exports.addDiaNoLaborable = async (req, res) => {
 
     // Envía una respuesta de éxito
     res.redirect('/profesionales/profesionalesDnl');
-  //  res.status(201).json({ message: 'Día no laborable agregado correctamente', nuevoDiaNoLaborable });
+
   } catch (error) {
     console.error("Error al agregar día no laborable:", error);
     res.status(500).json({ error: 'Error al agregar día no laborable' });
