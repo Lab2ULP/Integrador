@@ -1,0 +1,19 @@
+extends layoutSecretario
+
+block content
+  h1 Listado de Especialidades por Profesionales Activos
+
+  table
+    thead
+      tr
+        th Especialidad
+        th Profesional
+        th Acciones
+    tbody
+      each item in profesionales
+        tr
+          td= item.Especialidad.nombre
+          td= item.Profesional.Persona.nombre
+          td
+            a(href=`/agenda/${item.Profesional.ID}`) Ver agenda 
+

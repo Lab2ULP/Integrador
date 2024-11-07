@@ -11,9 +11,10 @@ const Clasificacion = db.define('Clasificacion',{
         type:DataTypes.STRING(15),
         allowNull:false
     },
-    especialiad:{
+    especialidad:{
         type:DataTypes.BOOLEAN,
-        allowNull:false
+        allowNull:false,
+        defaultValue:true
     }
 }, {
     tableName:'clasificaciones',
