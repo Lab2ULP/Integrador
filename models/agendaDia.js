@@ -26,11 +26,11 @@ const AgendaDia = sequelize.define('AgendaDia', {
         }
     },
     hora_inicio: {
-        type: DataTypes.STRING(5),
+        type: DataTypes.TIME, // Cambiado a tipo TIME
         allowNull: false
     },
     hora_final: {
-        type: DataTypes.STRING(5),
+        type: DataTypes.TIME, // Cambiado a tipo TIME
         allowNull: false
     }
 }, {

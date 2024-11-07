@@ -13,6 +13,7 @@ const pdnlRoutes = require('./routes/pdnlRoutes');
 const profesionalRoutes = require('./routes/profesionalRoutes');
 const agendaRoutes = require('./routes/agendaRoutes')
 const clasificacionRoutes = require('./routes/clasificacionRoutes')
+const diasAgendaRoutes = require('./routes/diasAgendaRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -58,7 +59,10 @@ app.use('/noLaborables', pdnlRoutes);
 
 app.use('/profesionales', profesionalRoutes);
 
+
 app.use('/secretario', agendaRoutes)
+
+app.use('/diasAgenda', diasAgendaRoutes);
 
 // Sincronizar la base de datos y iniciar el servidor
 sequelize.sync().then(() => {
