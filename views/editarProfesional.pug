@@ -3,7 +3,7 @@ extends layoutAdmin
 block content
   h1 Editar Profesional
 
-  form(action=`/profesional/editar/${profesional.ID}`, method='POST')
+  form(action=`/profesionales/editar/${profesional.ID}`, method='POST')
     //- Datos Personales
     label(for='nombre') Nombre:
     input(type='text', name='nombre', value=profesional.Persona.nombre, required placeholder='Ingrese el nombre')

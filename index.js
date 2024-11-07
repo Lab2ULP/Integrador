@@ -11,6 +11,8 @@ const usuarioRoutes = require('./routes/usuarioRoutes');
 const pacienteRoutes = require('./routes/pacienteRoutes');
 const pdnlRoutes = require('./routes/pdnlRoutes');
 const profesionalRoutes = require('./routes/profesionalRoutes');
+const agendaRoutes = require('./routes/agendaRoutes')
+const clasificacionRoutes = require('./routes/clasificacionRoutes')
 const diasAgendaRoutes = require('./routes/diasAgendaRoutes');
 
 const app = express();
@@ -41,7 +43,6 @@ app.use('/usuarios', usuarioRoutes);
 
 app.use('/pacientes',pacienteRoutes);
 
-app.use('/lis', profesionalRoutes); // Prefijo '/api' (opcional)
 
 // Rutas
 app.use('/api/personas', personaRoutes); // Todas las rutas de personas se agrupan bajo /api/personas
@@ -50,11 +51,16 @@ app.get('/',(req,res)=>{
   res.render('login')
 })
 
+app.use('/clasificaciones',clasificacionRoutes)
+
 app.use('/auth',authRoutes);
 
 app.use('/noLaborables', pdnlRoutes);
 
 app.use('/profesionales', profesionalRoutes);
+
+
+app.use('/secretario', agendaRoutes)
 
 app.use('/diasAgenda', diasAgendaRoutes);
 

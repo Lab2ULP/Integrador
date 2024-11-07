@@ -73,13 +73,12 @@ exports.editarProfesional = async (req, res) => {
     // Actualizar datos de Persona
     await profesional.Persona.update({ nombre, dni, nacimiento });
 
-    return res.redirect('/lis/profesionales');
+    return res.redirect('/profesionales/lista');
   } catch (error) {
     console.error('Error al actualizar el profesional:', error);
     return res.status(500).send('Error al actualizar el profesional');
   }
 };
-
 
 exports.actualizarEstado = async (req,res) => {
   const { profesionalID, estado } = req.body;
@@ -91,7 +90,7 @@ exports.actualizarEstado = async (req,res) => {
       { where: { ID: profesionalID } }
     );
 
-    res.redirect('/lis/profesionales'); // Redirige a donde sea necesario
+    res.redirect('/profesionales/lista'); // Redirige a donde sea necesario
   } catch (error) {
     console.error('Error al actualizar el estado:', error);
     res.status(500).send('Error al actualizar el estado');
@@ -198,4 +197,3 @@ exports.borrarEspecialidad = async (req, res) => {
     res.status(500).send('Error al eliminar la especialidad del profesional');
   }
 };
-

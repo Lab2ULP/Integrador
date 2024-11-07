@@ -1,9 +1,6 @@
-// PROFESIONAL DIAS NO LABORABLES VISTA AGREGAR
-doctype html
-html
-  head
-    title Agregar Día No Laborable
-  body
+extends layoutAdmin
+
+block content
     h1 Agregar Día No Laborable
     form(action="/noLaborables/add" method="POST")
       label(for="nombre") Nombre: 
