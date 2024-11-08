@@ -42,7 +42,7 @@ const Turno = sequelize.define('Turno', {
         }
     },
     estado_turno: {
-        type: DataTypes.ENUM('No disponible','Libre','Reservado','Confirmado','Cancelado','Ausente','Presente','En consulta','Atendido','Sobreturno'),
+        type: DataTypes.ENUM('Libre','No disponible','Reservado','Confirmado','Cancelado','Ausente','Presente','En consulta','Atendido','Sobreturno'),
         allowNull: false,
         defaultValue: 'pendiente'
     }

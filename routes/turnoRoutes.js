@@ -6,9 +6,6 @@ const turnoController = require('../controllers/turnoController');
 // Obtener todos los turnos
 router.get('/todos', turnoController.obtenerTodosTurnos);
 
-// Agregar un nuevo turno
-router.post('/agregar', turnoController.agregarTurno);
-
 // Actualizar el estado de un turno
 router.post('/actualizarEstado', turnoController.actualizarEstadoTurno);
 
