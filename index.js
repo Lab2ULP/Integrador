@@ -14,6 +14,7 @@ const profesionalRoutes = require('./routes/profesionalRoutes');
 const agendaRoutes = require('./routes/agendaRoutes')
 const clasificacionRoutes = require('./routes/clasificacionRoutes')
 const diasAgendaRoutes = require('./routes/diasAgendaRoutes');
+const turnoRoutes = require('./routes/turnoRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -43,7 +44,7 @@ app.use('/usuarios', usuarioRoutes);
 
 app.use('/pacientes',pacienteRoutes);
 
-
+app.use('/turnos', turnoRoutes);
 // Rutas
 app.use('/api/personas', personaRoutes); // Todas las rutas de personas se agrupan bajo /api/personas
 
@@ -51,7 +52,7 @@ app.get('/',(req,res)=>{
   res.render('login')
 })
 
-app.use('/clasificaciones',clasificacionRoutes)
+app.use('/clasificaciones',clasificacionRoutes);
 
 app.use('/auth',authRoutes);
 

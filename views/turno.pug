@@ -1,0 +1,53 @@
+extends layoutAdmin 
+
+block content
+  h1 Turnos
+
+  h2 Agregar Nuevo Turno
+  form(action='/turnos/agregar', method='POST')
+    label(for='pacienteID') Paciente:
+    input(type='text', name='pacienteID', id='pacienteID' required)
+    br
+    label(for='agendaID') Agenda:
+    input(type='text', name='agendaID', id='agendaID' required)
+    br
+    label(for='estado') Estado:
+    select(name='estado', id='estado')
+      each estado in tipoTurnos 
+        option(value=estado.nombre)= estado.nombre 
+    br
+    button(type='submit') Agregar Turno
+
+
+  h2 Lista de Turnos
+  table
+    thead
+      tr
+
+        th Paciente
+        th Agenda
+        th Estado Actual
+        th Actualizar Estado
+    tbody
+      each turno in turnos
+        tr
+
+          td= turno.pacienteID
+          td= turno.agendaID
+          td= turno.estado_turno
+          
+          td
+            form(action='/turnos/actualizarEstado', method='POST', style='display:inline-block')
+              input(type='hidden', name='ID', value=turno.ID)
+              select(name='nuevoEstado')
+                each estado in tipoTurnos 
+                    option(value=estado.nombre)= estado.nombre 
+              button(type='submit') Cambiar Estado
+      
+            form(action='/turnos/eliminar', method='POST', style='display:inline-block; margin-left: 10px;')
+              input(type='hidden', name='ID', value=turno.ID)
+              button(type='submit') Eliminar
+
+  if message
+    div.alert
+      p= message
