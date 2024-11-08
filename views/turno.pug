@@ -1,0 +1,47 @@
+extends layoutAdmin 
+
+block content
+  h1 Turnos
+
+
+  h2 Lista de Turnos
+  table
+    thead
+      tr
+        th Paciente
+        th Agenda
+        th Fecha
+        th Hora Inicio
+        th Hora Final
+        th Motivo
+        th Estado Actual
+        th Actualizar Estado
+    tbody
+      each turno in turnos
+        tr
+          td= turno.pacienteID
+          td= turno.agendaID
+          td= turno.fecha
+          td= turno.hora_inicio
+          td= turno.hora_final
+          td= turno.motivo
+          td= turno.estado_turno
+          
+          td
+            form(action='/turnos/actualizarEstado', method='POST', style='display:inline-block')
+              input(type='hidden', name='ID', value=turno.ID)
+              
+              label(for='estado_turno') Estado:
+              select(name='estado_turno')
+                each estado in tipoTurnos 
+                  option(value=estado.nombre)= estado.nombre 
+              
+              button(type='submit') Actualizar Turno
+          
+            form(action='/turnos/eliminar', method='POST', style='display:inline-block; margin-left: 10px;')
+              input(type='hidden', name='ID', value=turno.ID)
+              button(type='submit') Eliminar
+
+  if message
+    div.alert
+      p= message
