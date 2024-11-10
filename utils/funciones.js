@@ -1,34 +1,33 @@
-function calcularTurnos(horaInicio, horaFin, duracionTurno) {
-    const [inicioHoras, inicioMinutos] = horaInicio.split(":").map(Number);
-    const [finHoras, finMinutos] = horaFin.split(":").map(Number);
-
-    const minutosInicio = inicioHoras * 60 + inicioMinutos;
-    const minutosFin = finHoras * 60 + finMinutos;
-
-    const minutosDiferencia = minutosFin - minutosInicio;
-    const cantidadTurnos = Math.floor(minutosDiferencia / duracionTurno);
-
+function calcularTurnos(horaInicio, horaFinal, duracion) {
     const turnos = [];
-
-    // Calcula y almacena el inicio y fin de cada turno
-    for (let i = 0; i < cantidadTurnos; i++) {
-        const inicioTurno = minutosInicio + i * duracionTurno;
-        const finTurno = inicioTurno + duracionTurno;
-
-        // Convierte los minutos en formato HH:MM
-        const inicioHora = new Date(0, 0, 0, Math.floor(inicioTurno / 60), inicioTurno % 60)
-            .toTimeString()
-            .slice(0, 5);
-        const finHora = new Date(0, 0, 0, Math.floor(finTurno / 60), finTurno % 60)
-            .toTimeString()
-            .slice(0, 5);
-
-        turnos.push({ inicio: inicioHora, fin: finHora });
+    
+    // Crear las fechas de inicio y fin usando las horas proporcionadas
+    let horaInicioDate = new Date(`1970-01-01T${horaInicio}:00`); // Usar solo horaInicio como base
+    const horaFinalDate = new Date(`1970-01-01T${horaFinal}:00`); // Usar solo horaFinal como base
+  
+    while (horaInicioDate < horaFinalDate) {
+        const horaFin = new Date(horaInicioDate.getTime() + duracion * 60000); // duracion en minutos
+        
+        // Convertir la hora de inicio y fin a formato de 24 horas sin la zona horaria
+        turnos.push({
+            inicio: horaInicioDate.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }), // Formato 24h
+            fin: horaFin.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }) // Formato 24h
+        });
+        
+        // Sumar la duración de cada turno a la hora de inicio
+        horaInicioDate = horaFin;
     }
-
+  
     return turnos;
 }
 
+function sumarUnDia(fecha) {
+    const nuevaFecha = new Date(fecha);
+    nuevaFecha.setDate(nuevaFecha.getDate() + 1); // Suma un día
+    return nuevaFecha.toISOString().split('T')[0]; // Devuelve la fecha en formato 'YYYY-MM-DD'
+} 
+
+/*
 function sumarUnDia(fechaString) {
     // Crear el objeto Date dividiendo el string en año, mes y día para evitar problemas de zona horaria
     const [anio, mes, dia] = fechaString.split('-').map(Number);
@@ -43,8 +42,8 @@ function sumarUnDia(fechaString) {
     const nuevoDia = String(fecha.getDate()).padStart(2, '0');
 
     return `${nuevoAnio}-${nuevoMes}-${nuevoDia}`;
-}
-
+}*/
+  
 // Ejemplo de uso:
 /*const fechaOriginal = "2024-12-31";
 const fechaConUnDiaMas = sumarUnDia(fechaOriginal);
