@@ -5,123 +5,139 @@ const sequelize = require('../config/database');
 
 
 exports.crearAgenda = async (req, res) => {
-    const {
-        profesional,
-        especialidadID,
-        limiteSobreturnos,
-        sucursal,
-        duracionTurnos,
-        fechaDesde,
-        fechaHasta,
-        clasificacionExtra,
-        dias
-    } = req.body;
+  const {
+      profesional,
+      especialidadID,
+      limiteSobreturnos,
+      sucursal,
+      duracionTurnos,
+      fechaDesde,
+      fechaHasta,
+      clasificacionExtra,
+      dias
+  } = req.body;
 
-    try {
-        // Ejecutar la transacción principal
-        const nuevaAgenda = await sequelize.transaction(async (t) => {
-            // Crear la agenda
-            const nuevaAgenda = await Agenda.create({
-                prof_especialidadID: profesional,
-                sucursalID: sucursal,
-                sobre_turnos_limites: limiteSobreturnos,
-                duracion_turnos: duracionTurnos,
-                fecha_desde: fechaDesde,
-                fecha_hasta: fechaHasta,
-            }, { transaction: t });
+  try {
+      // Paso 1: Crear la agenda y la clasificación, en una transacción
+      const nuevaAgenda = await sequelize.transaction(async (t) => {
+          const agendaCreada = await Agenda.create({
+              prof_especialidadID: profesional,
+              sucursalID: sucursal,
+              sobre_turnos_limites: limiteSobreturnos,
+              duracion_turnos: duracionTurnos,
+              fecha_desde: fechaDesde,
+              fecha_hasta: fechaHasta,
+          }, { transaction: t });
 
-            // Crear AgendaClasificacion si hay clasificacion extra
-            if (clasificacionExtra) {
-                await AgendaClasificacion.create({
+          if (clasificacionExtra) {
+              await AgendaClasificacion.create({
+                  agendaID: agendaCreada.ID,
+                  clasificacionID: clasificacionExtra
+              }, { transaction: t });
+          }
+
+          return agendaCreada; // Devolver la agenda creada para su uso posterior
+      });
+
+        // Paso 2: Registrar los días seleccionados en la base de datos
+        // Registrar cada día y sus horarios en la tabla "dias_agendas"
+        for (const dia of dias) {
+            if (dia.horaInicioManiana) {
+                await AgendaDia.create({
                     agendaID: nuevaAgenda.ID,
-                    clasificacionID: clasificacionExtra
-                }, { transaction: t });
+                    diaID: dia.diaID,
+                    hora_inicio: dia.horaInicioManiana,
+                    hora_final: dia.horaFinalManiana,
+                });
             }
-
-            // Crear AgendaDia para cada día
-            for (const dia of dias) {
-                if (dia.horaInicioManiana) {
-                    await AgendaDia.create({
-                        agendaID: nuevaAgenda.ID,
-                        diaID: dia.diaID,
-                        hora_inicio: dia.horaInicioManiana,
-                        hora_final: dia.horaFinalManiana,
-                    }, { transaction: t });
-                }
-                if (dia.horaInicioTarde) {
-                    await AgendaDia.create({
-                        agendaID: nuevaAgenda.ID,
-                        diaID: dia.diaID,
-                        hora_inicio: dia.horaInicioTarde,
-                        hora_final: dia.horaFinalTarde,
-                    }, { transaction: t });
-                }
+            if (dia.horaInicioTarde) {
+                await AgendaDia.create({
+                    agendaID: nuevaAgenda.ID,
+                    diaID: dia.diaID,
+                    hora_inicio: dia.horaInicioTarde,
+                    hora_final: dia.horaFinalTarde,
+                });
             }
-
-            return nuevaAgenda; // Devolver la nueva agenda para usar su ID
-        });
-
-        // Crear los turnos fuera de la transacción principal
-        let fechaTurno = new Date(fechaDesde); // Convertimos la fechaDesde a un objeto Date para iterar sobre ella.
-
-        while (fechaTurno <= new Date(fechaHasta)) { // Mientras la fechaTurno esté dentro del rango
-            for (const dia of dias) {
-                // Crear turnos solo para los días seleccionados y horas correspondientes
-                if (dia.diaID) {
-                    if (dia.horaInicioManiana) {
-                        const turnosManiana = calcularTurnos(dia.horaInicioManiana, dia.horaFinalManiana, duracionTurnos);
-                        for (let i = 0; i < turnosManiana.length; i++) {
-                            const turno = turnosManiana[i];
-                            // Crear turno solo si está dentro de las fechas seleccionadas
-                            if (fechaTurno >= new Date(fechaDesde) && fechaTurno <= new Date(fechaHasta)) {
-                                await Turno.create({
-                                    agendaID: nuevaAgenda.ID,
-                                    fecha: fechaTurno.toISOString().split('T')[0], // Guardamos la fecha en formato 'YYYY-MM-DD'
-                                    hora_inicio: turno.inicio,
-                                    hora_final: turno.fin,
-                                    motivo: "",
-                                    pacienteID: null,
-                                    estado_turno: 'Libre'
-                                });
-                            }
-                        }
-                    }
-
-                    // Repetir para la tarde
-                    if (dia.horaInicioTarde) {
-                        const turnosTarde = calcularTurnos(dia.horaInicioTarde, dia.horaFinalTarde, duracionTurnos);
-                        for (let i = 0; i < turnosTarde.length; i++) {
-                            const turno = turnosTarde[i];
-                            if (fechaTurno >= new Date(fechaDesde) && fechaTurno <= new Date(fechaHasta)) {
-                                await Turno.create({
-                                    agendaID: nuevaAgenda.ID,
-                                    fecha: fechaTurno.toISOString().split('T')[0], // Guardamos la fecha en formato 'YYYY-MM-DD'
-                                    hora_inicio: turno.inicio,
-                                    hora_final: turno.fin,
-                                    motivo: "",
-                                    pacienteID: null,
-                                    estado_turno: 'Libre'
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Sumar un día a la fechaTurno
-            fechaTurno = sumarUnDia(fechaTurno); // Avanzar al siguiente día
         }
+        // Paso 3: Crear los turnos para cada día seleccionado
+        for (const dia of dias) {
+          const diaID = parseInt(dia.diaID); // Convertir diaID a número para comparar con getDay()
+          let fechaTurno = new Date(fechaDesde);
+          fechaTurno.setDate(fechaTurno.getDate() - 1); // Restar un día
 
-        res.redirect('/secretario/lista/medicos');
-    } catch (error) {
-        console.error('Error al crear la agenda:', error);
-        res.status(500).json({ message: 'Error al crear la agenda' });
-    }
-};
+          /*let fechaTurno = new Date(fechaDesde); // Inicializar desde la fecha de inicio cada vez
+          fechaTurno.setDate(fechaTurno.getDate() + 1);*/
+      
+          // Iterar dentro del rango de fechas
+          while (fechaTurno <= new Date(fechaHasta)) {
+              // Verificar si la fecha actual corresponde al día de la semana seleccionado en el checkbox
+              if (fechaTurno.getDay() === diaID) {
+                  console.log('Creando turnos para:', fechaTurno.toISOString().split('T')[0]);
+      
+                  // Crear turnos para la mañana, si está configurada
+                  if (dia.horaInicioManiana) {
+                      const turnosManiana = calcularTurnos(dia.horaInicioManiana, dia.horaFinalManiana, duracionTurnos);
+                      for (const turno of turnosManiana) {
+                          await Turno.create({
+                              agendaID: nuevaAgenda.ID,
+                              fecha: fechaTurno.toISOString().split('T')[0], // Guardar fecha en formato 'YYYY-MM-DD'
+                              hora_inicio: turno.inicio,
+                              hora_final: turno.fin,
+                              motivo: "",
+                              pacienteID: null,
+                              estado_turno: 'Libre'
+                          });
+                      }
+                  }
+      
+                  // Crear turnos para la tarde, si está configurada
+                  if (dia.horaInicioTarde) {
+                      const turnosTarde = calcularTurnos(dia.horaInicioTarde, dia.horaFinalTarde, duracionTurnos);
+                      for (const turno of turnosTarde) {
+                          await Turno.create({
+                              agendaID: nuevaAgenda.ID,
+                              fecha: fechaTurno.toISOString().split('T')[0],
+                              hora_inicio: turno.inicio,
+                              hora_final: turno.fin,
+                              motivo: "",
+                              pacienteID: null,
+                              estado_turno: 'Libre'
+                          });
+                      }
+                  }
+              }
+      
+              // Avanzar al siguiente día sin modificar el día original
+              fechaTurno.setDate(fechaTurno.getDate() + 1);
+          }
+      }
+      
 
+      // Redirigir después de que se complete la creación
+      res.redirect('/secretario/lista/medicos');
+    
 
+  } catch (error) {
+      console.error('Error al crear la agenda:', error);
+      res.status(500).json({ message: 'Error al crear la agenda' });
+  }
+}; 
 
-
+/*
+exports.crearAgenda = async (req,res) =>{
+  const {
+    profesional,
+    especialidadID,
+    limiteSobreturnos,
+    sucursal,
+    duracionTurnos,
+    fechaDesde,
+    fechaHasta,
+    clasificacionExtra,
+    dias
+} = req.body;
+res.json(fechaDesde);
+}*/
 
 
 /*

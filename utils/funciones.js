@@ -27,6 +27,8 @@ function sumarUnDia(fecha) {
     return nuevaFecha.toISOString().split('T')[0]; // Devuelve la fecha en formato 'YYYY-MM-DD'
 } 
 
+module.exports = {calcularTurnos,sumarUnDia}
+
 /*
 function sumarUnDia(fechaString) {
     // Crear el objeto Date dividiendo el string en año, mes y día para evitar problemas de zona horaria
@@ -59,4 +61,3 @@ const duracionTurno = 30;
 console.log(calcularTurnos(horaInicio, horaFin, duracionTurno));
 */
 
-module.exports = {calcularTurnos,sumarUnDia}
