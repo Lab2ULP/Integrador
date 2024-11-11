@@ -1,7 +1,55 @@
 // Función que itera sobre el rango de fechas y crea los turnos
-const { Clasificacion, AgendaDia, Agenda, AgendaClasificacion, Profesional, Especialidad, ProfesionalEspecialidad, Persona, Sucursal, Dia, Turno, Paciente } = require('../models/main');
+const { Clasificacion, AgendaDia, Agenda, AgendaClasificacion, Profesional, Especialidad, ProfesionalEspecialidad, Persona, Sucursal, Dia, Turno, Paciente,ProfesionalDiasNoLaborables } = require('../models/main');
 const { calcularTurnos, sumarUnDia } = require('../utils/funciones');
 const sequelize = require('../config/database');
+const { Op } = require('sequelize');  // Importar Op correctamente
+
+
+exports.listarTurnos = async (req, res) => {
+  const agendaID = req.params.ID;  // Obtener el ID de la agenda desde la URL
+  const profesionalID = req.params.Pid;  // Obtener el ID del profesional desde la URL
+  
+  try {
+    // Obtener los días no laborables para el profesional
+    const diasNoLaborables = await ProfesionalDiasNoLaborables.findAll({
+      attributes: ['fecha'],
+      where: { profesionalID: profesionalID }
+    });
+
+    const fechasNoLaborables = diasNoLaborables.map(dia => dia.fecha);
+
+    // Verifica si fechasNoLaborables está vacío
+    if (fechasNoLaborables.length === 0) {
+      console.log('No hay días no laborables');
+    }
+
+    // Obtener los turnos que no caen en días no laborables
+    const turnos = await Turno.findAll({
+      where: {
+        fecha: { [Op.notIn]: fechasNoLaborables.length > 0 ? fechasNoLaborables : [''] },  // Si está vacío, pasa un arreglo vacío para no filtrar
+        agendaID: agendaID
+      }
+    });
+
+    // Agrupar los turnos por fecha
+    const turnosAgrupados = turnos.reduce((acc, turno) => {
+      const fecha = turno.fecha;
+      if (!acc[fecha]) {
+        acc[fecha] = [];
+      }
+      acc[fecha].push(turno);
+      return acc;
+    }, {});
+
+    // Renderizar los turnos agrupados en la vista 'listaTurnos'
+    res.render('listaTurnos', { turnosAgrupados });
+    //res.json(turnosAgrupados)
+  } catch (error) {
+    console.error('Error al listar turnos:', error);
+    res.status(500).send('Error al listar los turnos');
+  }
+};
+
 
 
 exports.crearAgenda = async (req, res) => {
@@ -137,38 +185,41 @@ res.json(sumarUnDia(fechaHasta));
 }*/
 
 exports.listarAgendas = async(req,res) => {
+  try{
 
-}
-
-exports.listarMedicos = async(req,res) => {
-    try{
-        const profesionales = await ProfesionalEspecialidad.findAll({
-            attributes: ['especialidadID', 'profesionalID'],
-            include: [
-              {
-                model: Especialidad,
-                attributes: ['nombre'], // Alias para el nombre de la especialidad
-              },
-              {
-                model: Profesional,
-                attributes: ['estado'],
-                where:{estado:true},
-                include: [
+    const agendas = await Agenda.findAll({
+      attributes: ['ID', 'sobre_turnos_limites', 'prof_especialidadID', 'sucursalID', 'duracion_turnos', 'fecha_desde', 'fecha_hasta'],
+      include: [
+          {
+              model: ProfesionalEspecialidad,
+              as: 'EspecialidadesProfesionale',
+              attributes: ['ID'],
+              include: [
                   {
-                    model: Persona,
-                    attributes: ['nombre'], // Alias para el nombre de la persona
+                      model: Profesional,
+                      attributes: ['ID'],
+                      include: [
+                          {
+                              model: Persona,
+                              attributes: ['nombre']
+                          }
+                      ]
+                  },
+                  {
+                      model: Especialidad,
+                      attributes: ['nombre']
                   }
-                ]
-              }
-            ]
-          });
-        
-        //res.json(profesionales[0].Profesional.Persona.nombre)
-        res.render('listaMedicos',{profesionales})      
-    } catch (error) {
-        console.error('Error al obtner las especialidades relacionadas a los profesionales',error)
-    }
+              ]
+          }
+      ]
+  });  
+      //res.json(agendas[0].EspecialidadesProfesionale)
+      res.render('listaMedicos',{agendas})      
+  } catch (error) {
+      console.error('Error al obtner las especialidades relacionadas a los profesionales',error)
+  }
 }
+
 
 exports.renderCrearAgenda = async(req,res) =>{
   try{
@@ -216,37 +267,3 @@ exports.renderCrearAgenda = async(req,res) =>{
 } 
 
 
-
-/*
-exports.crearAgenda= async(req,res) => {
-  const {
-    profesional,
-    especialidadID,
-    limiteSobreturnos,
-    sucursal,
-    duracionTurnos,
-    fechaDesde,
-    fechaHasta,
-    clasificacionExtra,
-    dias // Este campo debe ser un array de días con sus horarios
-} = req.body;
-for (const dia of dias) {
-  if(dia.diaID){
-    console.log('Hay dia' + dia.nombre)
-  }else{
-    console.log('NO Hay dia' + dia.nombre) 
-  }
-}
-res.json(dias)
-}
-*/
-/*
-              await AgendaDia.create({
-                agendaID: nuevaAgenda.ID,
-                diaID: dia.diaID,
-                hora_inicio_maniana: dia.horaInicioManiana,
-                hora_fin_maniana: dia.horaFinalManiana,
-                hora_inicio_tarde: dia.horaInicioTarde,
-                hora_fin_tarde: dia.horaFinalTarde,
-              }, { transaction: t });
-*/

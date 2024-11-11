@@ -1,0 +1,26 @@
+extends layoutAdmin
+
+block content
+  h1 Listado de Turnos
+
+  
+  if turnosAgrupados && Object.keys(turnosAgrupados).length > 0
+    each fecha, turnos in turnosAgrupados
+      
+      h2= fecha
+
+      table
+        thead
+          tr
+            th Hora de Inicio
+            th Hora de Fin
+            th Estado del Turno
+        tbody
+          each turno in turnos
+            tr
+              td= turno.hora_inicio 
+              td= turno.hora_final  
+              td= turno.estado_turno  
+
+  else
+    p No hay turnos disponibles para esta agenda.
