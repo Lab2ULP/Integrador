@@ -27,7 +27,7 @@ exports.iniciarSesion = async (req, res) => {
     if (usuario.rolID == 1) {
       res.redirect('/profesionales/lista');
     } else if (usuario.rolID == 2) {
-      res.redirect('/secretario/lista/medicos');
+      res.redirect('/secretario/lista/agendas');
     } else {
       res.render('usuarioPrincipal');
     }
