@@ -26,7 +26,7 @@ const Turno = sequelize.define('Turno', {
         allowNull: false
     },
     hora_final: {
-        type: DataTypes.DATE,
+        type: DataTypes.TIME,
         allowNull: false
     },
     motivo: {
@@ -35,7 +35,7 @@ const Turno = sequelize.define('Turno', {
     },
     pacienteID: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
             model: Paciente,
             key: 'ID'
