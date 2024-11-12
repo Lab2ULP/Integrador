@@ -12,6 +12,7 @@ const ProfesionalDiasNoLaborables = require('./profesionalDiasNoLaborables')
 const DiasNoLaborables = require('./diasNoLaborables');
 const Turno = require('./turno');
 const Paciente = require('./paciente');
+const Usuario = require ('./usuario');
 
 // Definir las relaciones muchos a muchos en un lugar central
 Profesional.belongsToMany(Especialidad, {
@@ -28,6 +29,8 @@ Especialidad.belongsToMany(Profesional, {
     timestamps:false
 });
 
+// En el modelo Usuario
+Usuario.belongsTo(Persona, { foreignKey: 'personaID' });
 
 Turno.belongsTo(Paciente, { foreignKey: 'pacienteID' });
 
@@ -117,6 +120,7 @@ module.exports = {
     ProfesionalDiasNoLaborables,
     DiasNoLaborables,
     Turno,
-    Paciente
+    Paciente,
+    Usuario
 };
 
