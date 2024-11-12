@@ -1,0 +1,46 @@
+extends layoutAdmin
+
+block content
+  h1 Listado de Turnos
+
+  if turnos && turnos.length > 0
+    table
+      thead
+        tr
+          th ID
+          th Agenda ID
+          th Fecha
+          th Hora de Inicio
+          th Hora de Fin
+          th Motivo
+          th Paciente ID y Estado del Turno
+      tbody
+        each turno in turnos
+          tr
+            td= turno.ID
+            td= turno.agendaID
+            td= new Date(turno.fecha).toLocaleDateString() 
+            td= turno.hora_inicio
+            td= turno.hora_final
+            td= turno.motivo || 'N/A'
+            td
+              // Muestra el nombre y DNI del paciente si existe
+              span= turno.pacienteID && turno.paciente.Usuario && turno.paciente.Usuario.Persona ? turno.paciente.Usuario.Persona.nombre + ' (' + turno.paciente.Usuario.Persona.dni + ')' : 'Sin asignar'
+              | 
+              form(action=`/secretario/agenda/${turno.ID}`, method='POST', style='display:inline-block')
+                input(type='hidden', name='ID', value=turno.ID)
+                
+                label(for='pacienteID') Paciente:
+                select(name='pacienteID')
+                  option(value='') Seleccionar paciente
+                  each paciente in pacientes
+                    option(value=paciente.ID)= paciente.Usuario.Persona.nombre + ' (' + paciente.Usuario.Persona.dni + ')'
+                
+                label(for='estado_turno') Estado:
+                select(name='estado_turno')
+                  each estado in tipoTurnos 
+                    option(value=estado.nombre)= estado.nombre 
+
+                button(type='submit') Actualizar Turno
+  else
+    p No hay turnos disponibles.

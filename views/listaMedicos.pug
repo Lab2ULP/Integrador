@@ -10,10 +10,10 @@ block content
         th Profesional
         th Acciones
     tbody
-      each item in profesionales
+      each agenda in agendas 
         tr
-          td= item.Especialidad.nombre
-          td= item.Profesional.Persona.nombre
+          td= agenda.EspecialidadesProfesionale.Especialidad.nombre
+          td= agenda.EspecialidadesProfesionale.Profesional.Persona.nombre
           td
-            a(href=`/agenda/${item.Profesional.ID}`) Ver agenda 
+            a(href=`/secretario/agenda/${agenda.ID}/${agenda.EspecialidadesProfesionale.Profesional.ID}`) Ver agenda 
 
