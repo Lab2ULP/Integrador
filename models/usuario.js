@@ -1,7 +1,7 @@
 // /models/usuario.js
 const { DataTypes } = require('sequelize');
 const db = require('../config/database');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const Persona = require('./persona');
 const Rol = require('./rol');
 
