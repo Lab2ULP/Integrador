@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const path = require('path'); // Para servir archivos estáticos
 const sequelize = require('./config/database'); // Asegúrate de que la ruta a tu archivo de configuración de la base de datos sea correcta
 const session = require('express-session')
+require('dotenv').config()
 
 const personaRoutes = require('./routes/personaRoutes');
 const authRoutes = require('./routes/authRoutes');
