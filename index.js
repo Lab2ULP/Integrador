@@ -3,9 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const sequelize = require('./config/database');
 const session = require('express-session');
-const SequelizeStore = require('connect-session-sequelize')(session); // Asegúrate de que 'session' esté correctamente importado
-require('dotenv').config();
-const helmet = require('helmet');
+
 
 // Rutas
 const personaRoutes = require('./routes/personaRoutes');
@@ -26,16 +24,12 @@ const session = require('express-session');
 // Configuración de la sesión
 app.use(session({
   secret: 'bicampeones_de_america',
-  store: new SequelizeStore({
-    db: sequelize, // Base de datos Sequelize
-  }),
   resave: false,
   saveUninitialized: false,
   cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 
-// Configurar Helmet para la seguridad
-app.use(helmet());
+
 // Configuración del middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
