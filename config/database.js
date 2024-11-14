@@ -1,12 +1,12 @@
 const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
+  'brtwodw9rogowfvwqly4',
+  'uvjbdvxadls8jols',
+  'ZSou7QsZNZgvu3gO9CPj',
   {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
+    host: 'brtwodw9rogowfvwqly4-mysql.services.clever-cloud.com',
+    port: 3306,
     dialect: 'mysql',
     dialectOptions: {
       ssl: {
@@ -16,5 +16,22 @@ const sequelize = new Sequelize(
     }
   }
 );
+
+
+
+// Configuración de Sequelize
+/*
+const sequelize = new Sequelize(
+  'agenda_consultorio', 
+  'root', 
+  '',
+   {
+  host: 'localhost',
+  dialect: 'mysql',
+});
+*/
+module.exports = sequelize;
+
+// mi ramita
 
 module.exports = sequelize;
