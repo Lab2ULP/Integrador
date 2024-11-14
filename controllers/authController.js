@@ -1,5 +1,5 @@
 const Usuario = require('../models/usuario');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
 exports.iniciarSesion = async (req, res) => {
   const { email, password } = req.body;
