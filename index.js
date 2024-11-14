@@ -19,7 +19,6 @@ const diasAgendaRoutes = require('./routes/diasAgendaRoutes');
 const turnoRoutes = require('./routes/turnoRoutes');
 
 const app = express();
-const session = require('express-session');
 
 
 // Configuración de la sesión
