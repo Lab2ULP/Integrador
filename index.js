@@ -38,7 +38,7 @@ app.use(express.static(path.join(__dirname, 'public'))); // Servir archivos estÃ
 
 
 app.use((err, req, res, next) => {
-  console.error('Error capturado:', err.stack); // Imprime el stack completo
+  console.error('Error capturado:', err.stack);
   res.status(500).send('Internal Server Error');
 });
 

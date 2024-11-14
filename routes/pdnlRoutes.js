@@ -12,6 +12,4 @@ router.post('/add', pdnlController.addDiaNoLaborable);
 // Cambia la ruta para eliminar un día no laborable de un profesional a POST
 router.post('/remove', pdnlController.removeDiaNoLaborable);
 
-
-
-module.exports = router;
+module.exports = router

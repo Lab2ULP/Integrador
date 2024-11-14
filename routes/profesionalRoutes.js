@@ -15,5 +15,4 @@ router.post('/crear',profesionalController.crearProfesional)
 router.post('/agregarEspecialidad/:id',profesionalController.sumarEspecialidad)
 router.post('/borrarEspecialidad',profesionalController.borrarEspecialidad)
 
-
 module.exports = router;

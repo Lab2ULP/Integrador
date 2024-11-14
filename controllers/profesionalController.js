@@ -124,7 +124,7 @@ exports.crearProfesional = async (req,res) => {
       especialidadID: especialidad,matricula
     })
 
-    res.redirect('/lis/profesionales')
+    res.redirect('/profesionales/lista')
   } catch (error) {
     console.error('Error al crear el profesional',error)
     res.status(500).send('Error al crear el profesional');

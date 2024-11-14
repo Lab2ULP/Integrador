@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const Agenda = require('./agenda'); // Importar el modelo Agenda
-const Clasificacion = require('./clasificacion'); // Importar el modelo Clasificacion
+const Agenda = require('./agenda'); 
+const Clasificacion = require('./clasificacion'); 
 
 const AgendaClasificacion = sequelize.define('AgendaClasificacion', {
     ID: {
@@ -26,7 +26,7 @@ const AgendaClasificacion = sequelize.define('AgendaClasificacion', {
         }
     }
 }, {
-    tableName: 'agendas_clasificaciones', // Cambia este nombre si es diferente en tu base de datos
+    tableName: 'agendas_clasificaciones', 
     timestamps: false
 });
 

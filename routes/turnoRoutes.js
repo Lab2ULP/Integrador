@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const turnoController = require('../controllers/turnoController');
 
-// Rutas para manejar turnos
 // Obtener todos los turnos
 router.get('/todos', turnoController.obtenerTodosTurnos);
 
