@@ -51,7 +51,7 @@ exports.listarTurnos = async (req, res) => {
     
   //res.json(pacientes);
     // Enviar los turnos a la vista
-    //res.json(tipoTurnos);
+    //res.json(pacientes);
     res.render('listaTurnos', { turnos: turnosPlanos, tipoTurnos, pacientes });
   } catch (error) {
     console.error('Error al listar turnos:', error);
@@ -59,6 +59,7 @@ exports.listarTurnos = async (req, res) => {
   }
 };
 
+/*
 exports.actualizarTurnos = async (req,res) => {
     const { pacienteID, estado_turno } = req.body; // Obtener los valores del cuerpo de la solicitud
     const { ID } = req.params; // Obtener el valor del ID desde los parámetros de la URL
@@ -93,7 +94,42 @@ exports.actualizarTurnos = async (req,res) => {
       res.status(500).send('Error al actualizar el turno');
     }
   };
+  */
+
+
+  exports.actualizarTurnos = async (req, res) => {
+    try {
+      // Extraemos los datos enviados desde el formulario
+      const { ID, pacienteID, estado_turno } = req.body;
   
+      // Verificamos que el ID del turno esté presente
+      if (!ID) {
+        return res.status(400).json({ message: 'El ID del turno es requerido' });
+      }
+  
+      // Buscamos el turno en la base de datos
+      const turno = await Turno.findByPk(ID);
+  
+      // Verificamos que el turno existe
+      if (!turno) {
+        return res.status(404).json({ message: 'Turno no encontrado' });
+      }
+  
+      // Actualizamos los campos del turno según los datos enviados
+      turno.pacienteID = pacienteID || null; // Si no se seleccionó paciente, asignamos null
+      turno.estado_turno = estado_turno;
+  
+      // Guardamos los cambios en la base de datos
+      await turno.save();
+  
+      // Redirigimos o enviamos una respuesta de éxito
+      //res.status(200).json({ message: 'Turno actualizado exitosamente' });
+      res.redirect('/secretario/lista/agendas')
+    } catch (error) {
+      console.error('Error al actualizar el turno:', error);
+      res.status(500).json({ message: 'Error al actualizar el turno' });
+    }
+  };
 
 
 
