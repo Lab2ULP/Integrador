@@ -8,7 +8,7 @@ require('dotenv').config()
 const helmet = require('helmet');
 
 
-app.use(helmet.contentSecurityPolicy({ useDefaults: false }));
+
 const personaRoutes = require('./routes/personaRoutes');
 const authRoutes = require('./routes/authRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
@@ -21,6 +21,7 @@ const diasAgendaRoutes = require('./routes/diasAgendaRoutes');
 const turnoRoutes = require('./routes/turnoRoutes');
 
 const app = express();
+app.use(helmet.contentSecurityPolicy({ useDefaults: false }));
 const PORT = process.env.PORT || 3000;
 
 // Middleware
