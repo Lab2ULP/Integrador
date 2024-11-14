@@ -39,6 +39,10 @@ app.use(session({
   cookie: { secure: process.env.NODE_ENV === 'production' } // true si estás 
 }));
 
+app.use((err, req, res, next) => {
+  console.error('Error capturado:', err.stack); // Imprime el stack completo
+  res.status(500).send('Internal Server Error');
+});
 
 // Configurar PUG como motor de plantillas
 app.set('view engine', 'pug');
