@@ -1,13 +1,10 @@
-// index.js
 const express = require('express');
 const bodyParser = require('body-parser');
-const path = require('path'); // Para servir archivos estáticos
-const sequelize = require('./config/database'); // Asegúrate de que la ruta a tu archivo de configuración de la base de datos sea correcta
-const session = require('express-session')
-require('dotenv').config()
+const path = require('path');
+const sequelize = require('./config/database');
+const session = require('express-session');
+require('dotenv').config();
 const helmet = require('helmet');
-
-
 
 const personaRoutes = require('./routes/personaRoutes');
 const authRoutes = require('./routes/authRoutes');
@@ -15,65 +12,58 @@ const usuarioRoutes = require('./routes/usuarioRoutes');
 const pacienteRoutes = require('./routes/pacienteRoutes');
 const pdnlRoutes = require('./routes/pdnlRoutes');
 const profesionalRoutes = require('./routes/profesionalRoutes');
-const agendaRoutes = require('./routes/agendaRoutes')
-const clasificacionRoutes = require('./routes/clasificacionRoutes')
+const agendaRoutes = require('./routes/agendaRoutes');
+const clasificacionRoutes = require('./routes/clasificacionRoutes');
 const diasAgendaRoutes = require('./routes/diasAgendaRoutes');
 const turnoRoutes = require('./routes/turnoRoutes');
 
+// Inicialización de la aplicación
 const app = express();
+
+// Configurar el uso de Helmet para la política de seguridad de contenido
 app.use(helmet.contentSecurityPolicy({ useDefaults: false }));
-const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(bodyParser.json()); // Para parsear el cuerpo de las solicitudes JSON
-app.use(bodyParser.urlencoded({ extended: true })); // Para parsear formularios URL-encoded
+// Middleware para parsear el cuerpo de las solicitudes
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// Servir archivos estáticos (CSS, imágenes, etc.)
-app.use(express.static(path.join(__dirname, 'public'))); // Asegúrate de tener una carpeta public para tus estilos
+// Configuración para servir archivos estáticos (CSS, imágenes, etc.)
+app.use(express.static(path.join(__dirname, 'public')));
 
-
-//configuracion de la sesion
+// Configuración de la sesión
 app.use(session({
-  secret:'bicampeones_de_america',
-  resave:false,
-  saveUninitialized:true,
+  secret: 'bicampeones_de_america',
+  resave: false,
+  saveUninitialized: true,
   cookie: { secure: false } 
-}))
+}));
 
-// Configurar PUG como motor de plantillas
+// Configuración del motor de plantillas PUG
 app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'views')); // Ruta a la carpeta de vistas
+app.set('views', path.join(__dirname, 'views'));
 
-
+// Rutas de la aplicación
 app.use('/usuarios', usuarioRoutes);
-
-app.use('/pacientes',pacienteRoutes);
-
+app.use('/pacientes', pacienteRoutes);
 app.use('/turnos', turnoRoutes);
-// Rutas
-app.use('/api/personas', personaRoutes); // Todas las rutas de personas se agrupan bajo /api/personas
-
-app.get('/',(req,res)=>{
-  res.render('login')
-})
-
-app.use('/clasificaciones',clasificacionRoutes);
-
-app.use('/auth',authRoutes);
-
+app.use('/api/personas', personaRoutes);
+app.use('/clasificaciones', clasificacionRoutes);
+app.use('/auth', authRoutes);
 app.use('/noLaborables', pdnlRoutes);
-
 app.use('/profesionales', profesionalRoutes);
-
-
-app.use('/secretario', agendaRoutes)
-
+app.use('/secretario', agendaRoutes);
 app.use('/diasAgenda', diasAgendaRoutes);
 
-// Sincronizar la base de datos y iniciar el servidor
+// Ruta principal
+app.get('/', (req, res) => {
+  res.render('login');
+});
+
+// Sincronizar la base de datos y luego iniciar el servidor
 sequelize.sync().then(() => {
+  const PORT = 3306; // Asegúrate de usar el puerto correcto en Render
   app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
   });
 }).catch(err => {
   console.error('Error al conectar a la base de datos:', err);
