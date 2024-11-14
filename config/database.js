@@ -1,11 +1,13 @@
-require('dotenv').config(); // Asegúrate de cargar las variables de entorno
-
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize(process.env.MYSQL_ADDON_DB, process.env.MYSQL_ADDON_USER, process.env.MYSQL_ADDON_PASSWORD, {
-  host: process.env.MYSQL_ADDON_HOST,
+const sequelize = new Sequelize({
+  host: process.env.DB_HOST,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
   dialect: 'mysql',
-  port: process.env.MYSQL_ADDON_PORT,
 });
+
 
 module.exports = sequelize;

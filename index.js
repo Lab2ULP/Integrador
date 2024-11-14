@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const sequelize = require('./config/database');
 const session = require('express-session');
+require('dotenv').config();
 
 
 // Rutas
