@@ -3,9 +3,11 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const sequelize = require('./config/database');
 const session = require('express-session');
+const SequelizeStore = require('connect-session-sequelize')(session); // Importamos la función SequelizeStore
 require('dotenv').config();
 const helmet = require('helmet');
 
+// Rutas
 const personaRoutes = require('./routes/personaRoutes');
 const authRoutes = require('./routes/authRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
@@ -17,30 +19,30 @@ const clasificacionRoutes = require('./routes/clasificacionRoutes');
 const diasAgendaRoutes = require('./routes/diasAgendaRoutes');
 const turnoRoutes = require('./routes/turnoRoutes');
 
-// Inicialización de la aplicación
 const app = express();
 
-// Configurar el uso de Helmet para la política de seguridad de contenido
+// Configurar Helmet para la seguridad
 app.use(helmet.contentSecurityPolicy({ useDefaults: false }));
 
-// Middleware para parsear el cuerpo de las solicitudes
+// Configuración del middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public'))); // Servir archivos estáticos
 
-// Configuración para servir archivos estáticos (CSS, imágenes, etc.)
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Configuración de la sesión
+// Configurar la sesión utilizando SequelizeStore
 app.use(session({
   secret: 'bicampeones_de_america',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } 
+  store: new SequelizeStore({
+    db: sequelize, // Usamos la instancia de sequelize para almacenar las sesiones en la base de datos
+  }),
+  resave: false, // No guarda la sesión si no ha sido modificada
+  saveUninitialized: true, // Guarda las sesiones no inicializadas
+  cookie: { secure: false }, // Cambiar a `true` si estás utilizando HTTPS
 }));
 
-// Configuración del motor de plantillas PUG
+// Configurar PUG como motor de plantillas
 app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'views')); // Ruta a las vistas
 
 // Rutas de la aplicación
 app.use('/usuarios', usuarioRoutes);
@@ -54,14 +56,14 @@ app.use('/profesionales', profesionalRoutes);
 app.use('/secretario', agendaRoutes);
 app.use('/diasAgenda', diasAgendaRoutes);
 
-// Ruta principal
+// Ruta de inicio
 app.get('/', (req, res) => {
   res.render('login');
 });
 
-// Sincronizar la base de datos y luego iniciar el servidor
+// Sincronizar la base de datos y arrancar el servidor
 sequelize.sync().then(() => {
-  const PORT = 3306; // Asegúrate de usar el puerto correcto en Render
+  const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
   });
