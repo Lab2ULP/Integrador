@@ -172,7 +172,7 @@ exports.sumarEspecialidad = async (req, res) => {
       matricula: matricula // Esto es correcto
     });
     //window.alert('')
-    res.redirect(`/lis/edit/${profesionalID}`);
+    res.redirect(`/profesionales/lista`);
   } catch (error) {
     console.error('Error al añadir especialidad', error);
     res.status(500).send('Error al añadir especialidad'); // Respuesta de error adecuada
@@ -191,7 +191,7 @@ exports.borrarEspecialidad = async (req, res) => {
       }
     });
 
-    res.redirect(`/lis/edit/${profesionalID}`);
+    res.redirect(`/profesionales/lista`);
   } catch (error) {
     console.error('Error al eliminar la especialidad del profesional:', error);
     res.status(500).send('Error al eliminar la especialidad del profesional');
