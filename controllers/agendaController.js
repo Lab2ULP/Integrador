@@ -59,8 +59,6 @@ exports.listarTurnos = async (req, res) => {
   }
 };*/
 
-const { Op } = require('sequelize');
-
 exports.listarTurnos = async (req, res) => {
   const agendaID = req.params.ID;
   const profesionalID = req.params.Pid;
