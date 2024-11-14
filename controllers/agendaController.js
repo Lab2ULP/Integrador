@@ -4,7 +4,7 @@ const { calcularTurnos, sumarUnDia } = require('../utils/funciones');
 const sequelize = require('../config/database');
 const { Op } = require('sequelize');  // Importar Op correctamente
 
-
+/*
 exports.listarTurnos = async (req, res) => {
   const agendaID = req.params.ID;
   const profesionalID = req.params.Pid;
@@ -57,7 +57,69 @@ exports.listarTurnos = async (req, res) => {
     console.error('Error al listar turnos:', error);
     res.status(500).send('Error al listar los turnos');
   }
+};*/
+
+const { Op } = require('sequelize');
+
+exports.listarTurnos = async (req, res) => {
+  const agendaID = req.params.ID;
+  const profesionalID = req.params.Pid;
+
+  try {
+    // Obtener los días no laborables para el profesional
+    const diasNoLaborables = await ProfesionalDiasNoLaborables.findAll({
+      attributes: ['fecha'],
+      where: { profesionalID: profesionalID }
+    });
+
+    const fechasNoLaborables = diasNoLaborables.map(dia => dia.fecha);
+
+    // Obtener los turnos que no caen en días no laborables
+    const whereConditions = { agendaID: agendaID };
+    
+    // Solo agregar el filtro de fechas no laborables si existe algún valor en fechasNoLaborables
+    if (fechasNoLaborables.length > 0) {
+      whereConditions.fecha = { [Op.notIn]: fechasNoLaborables };
+    }
+
+    const turnos = await Turno.findAll({
+      where: whereConditions,
+      attributes: ['ID', 'agendaID', 'fecha', 'hora_inicio', 'hora_final', 'motivo', 'pacienteID', 'estado_turno']
+    });
+
+    // Obtener los valores posibles del estado del turno
+    const tipoTurnos = Turno.rawAttributes.estado_turno.values.map(value => {
+      return { nombre: value }; // Generar un objeto para cada valor ENUM
+    });
+
+    // Convertir turnos a objetos planos
+    const turnosPlanos = turnos.map(turno => turno.toJSON());
+
+    // Obtener la información de los pacientes
+    const pacientes = await Paciente.findAll({
+      attributes: ['ID', 'usuarioID', 'obra_social', 'dato_contacto'],
+      include: [
+        {
+          model: Usuario,
+          attributes: ['ID'],
+          include: [
+            {
+              model: Persona,
+              attributes: ['nombre', 'dni'],
+            },
+          ],
+        },
+      ],
+    });
+
+    // Enviar los turnos a la vista
+    res.render('listaTurnos', { turnos: turnosPlanos, tipoTurnos, pacientes });
+  } catch (error) {
+    console.error('Error al listar turnos:', error);
+    res.status(500).send('Error al listar los turnos');
+  }
 };
+
 
 /*
 exports.actualizarTurnos = async (req,res) => {

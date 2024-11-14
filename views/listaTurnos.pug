@@ -1,50 +1,45 @@
 extends layoutAdmin
 
 block content
-  h1 Listado de Turnos
+  .content-header
+    h1 Listado de Turnos
 
   if turnos && turnos.length > 0
-    table
-      thead
-        tr
-          th ID
-          th Agenda ID
-          th Fecha
-          th Hora de Inicio
-          th Hora de Fin
-          th Motivo
-          th Paciente ID y Estado del Turno
-      tbody
-        each turno in turnos
+    .table-responsive
+      table
+        thead
           tr
-            td= turno.ID
-            td= turno.agendaID
-            td= new Date(turno.fecha).toLocaleDateString() 
-            td= turno.hora_inicio
-            td= turno.hora_final
-            td= turno.motivo || 'N/A'
-            td
-              span
-                if turno.pacienteID && turno.pacienteID !== null && turno.paciente && turno.paciente.Usuario && turno.paciente.Usuario.Persona
-                  | #{turno.pacienteID} (#{turno.paciente.Usuario.Persona.dni})
-                else
-                  | Sin asignar
-              |
-              form(action='/secretario/turnos/actualizarEstado', method='POST', style='display:inline-block')
-                input(type='hidden', name='ID', value=turno.ID)
-                
-                label(for='pacienteID') Paciente:
-                select(name='pacienteID')
-                  option(value='') Seleccionar paciente
-                  each paciente in pacientes
-                    option(value=paciente.ID, selected=turno.pacienteID == paciente.ID)= paciente.Usuario.Persona.nombre + ' (' + paciente.Usuario.Persona.dni + ')'
-    
-                label(for='estado_turno') Estado:
-                select(name='estado_turno')
-                  each estado in tipoTurnos 
-                    option(value=estado.nombre, selected=turno.estado_turno == estado.nombre)= estado.nombre 
-            
-                button(type='submit') Actualizar Turno
+            th ID
+            th Agenda ID
+            th Fecha
+            th Hora de Inicio
+            th Hora de Fin
+            th Acción
+        tbody
+          each turno in turnos
+            tr
+              td= turno.ID
+              td= turno.agendaID
+              td= new Date(turno.fecha).toLocaleDateString() 
+              td= turno.hora_inicio
+              td= turno.hora_final
+              td
+                form(action='/secretario/turnos/actualizarEstado', method='POST', style='display:inline-block')
+                  input(type='hidden', name='ID', value=turno.ID)
 
+                  // Selección de Paciente
+                  label(for='pacienteID') Paciente:
+                  select(name='pacienteID')
+                    option(value='') Seleccionar paciente
+                    each paciente in pacientes
+                      option(value=paciente.ID, selected=turno.pacienteID == paciente.ID)= paciente.Usuario.Persona.nombre + ' (' + paciente.Usuario.Persona.dni + ')'
+
+                  // Selección de Estado
+                  label(for='estado_turno') Estado:
+                  select(name='estado_turno')
+                    each estado in tipoTurnos 
+                      option(value=estado.nombre, selected=turno.estado_turno == estado.nombre)= estado.nombre 
+                
+                  button(type='submit') Actualizar Turno
   else
     p No hay turnos disponibles.
