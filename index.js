@@ -22,8 +22,7 @@ const turnoRoutes = require('./routes/turnoRoutes');
 const app = express();
 
 // Configurar Helmet para la seguridad
-app.use(helmet.contentSecurityPolicy({ useDefaults: false }));
-
+app.use(helmet());
 // Configuración del middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -37,7 +36,7 @@ app.use(session({
   }),
   resave: false,  // No guarda la sesión si no ha sido modificada
   saveUninitialized: false,  // No guarda las sesiones no inicializadas
-  cookie: { secure: false },  // Cambiar a true si usas HTTPS
+  cookie: { secure: process.env.NODE_ENV === 'production' } // true si estás 
 }));
 
 
