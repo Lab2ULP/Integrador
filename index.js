@@ -31,14 +31,15 @@ app.use(express.static(path.join(__dirname, 'public'))); // Servir archivos est�
 
 // Configurar la sesión utilizando SequelizeStore
 app.use(session({
-  secret: 'bicampeones_de_america',
+  secret: 'bicampeones_de_america',  // Asegúrate de que el 'secret' esté definido
   store: new SequelizeStore({
-    db: sequelize, // Usamos la instancia de sequelize para almacenar las sesiones en la base de datos
+    db: sequelize,  // Usamos Sequelize para almacenar las sesiones
   }),
-  resave: false, // No guarda la sesión si no ha sido modificada
-  saveUninitialized: true, // Guarda las sesiones no inicializadas
-  cookie: { secure: false }, // Cambiar a `true` si estás utilizando HTTPS
+  resave: false,  // No guarda la sesión si no ha sido modificada
+  saveUninitialized: false,  // No guarda las sesiones no inicializadas
+  cookie: { secure: false },  // Cambiar a true si usas HTTPS
 }));
+
 
 // Configurar PUG como motor de plantillas
 app.set('view engine', 'pug');
