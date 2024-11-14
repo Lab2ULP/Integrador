@@ -1,5 +1,6 @@
 const { Sequelize } = require('sequelize');
 
+/*
 const sequelize = new Sequelize({
   host: process.env.DB_HOST,
   username: process.env.DB_USER,
@@ -8,6 +9,11 @@ const sequelize = new Sequelize({
   port: process.env.DB_PORT,
   dialect: 'mysql',
 });
+*/
 
+const sequelize = new Sequelize('agenda_consultorio', 'root', '', {
+  host: 'localhost',
+  dialect: 'mysql',
+});
 
 module.exports = sequelize;
