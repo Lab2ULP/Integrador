@@ -12,8 +12,8 @@ const Rol = db.define('Rol', {
     allowNull: false
   }
 }, {
-  tableName: 'roles',  // nombre de la tabla en la BD
-  timestamps: false    // Si no usas createdAt y updatedAt
+  tableName: 'roles',  
+  timestamps: false    
 });
 
 module.exports = Rol;

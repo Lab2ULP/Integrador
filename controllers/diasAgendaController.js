@@ -8,7 +8,7 @@ exports.obtenerTodosDiasAgendas = async (req, res) => {
     const diasAgendas = await AgendaDia.findAll();
 
     // Devuelve los registros en formato JSON
- //   res.json(diasAgendas);
+    // res.json(diasAgendas);
     res.render('diasAgenda', { diasAgendas });
   } catch (error) {
     console.error("Error al obtener los registros de dias_agendas:", error);
@@ -65,8 +65,8 @@ exports.agregarDiaAgenda = async (req, res) => {
 };
 
   
-  // Función para actualizar un registro existente en dias_agendas
-  exports.actualizarDiaAgenda = async (req, res) => {
+// Función para actualizar un registro existente en dias_agendas
+exports.actualizarDiaAgenda = async (req, res) => {
     try {
 
       const { ID, diaID, hora_inicio, hora_final } = req.body;
@@ -94,11 +94,11 @@ exports.agregarDiaAgenda = async (req, res) => {
       console.error("Error al actualizar un registro en dias_agendas:", error);
       res.status(500).json({ error: "Error interno del servidor" });
     }
-  };
+};
   
   
-  // Función para eliminar un registro en dias_agendas
-  exports.eliminarDiaAgenda = async (req, res) => {
+// Función para eliminar un registro en dias_agendas
+exports.eliminarDiaAgenda = async (req, res) => {
     try {
       const { ID } = req.body; // Asegúrate de que el ID se obtenga del cuerpo de la solicitud
   
@@ -126,7 +126,7 @@ exports.agregarDiaAgenda = async (req, res) => {
       console.error("Error al eliminar un registro en dias_agendas:", error);
       res.status(500).json({ error: "Error interno del servidor" });
     }
-  };
+};
   
   
   

@@ -17,7 +17,7 @@ const Agenda = sequelize.define('Agenda', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: ProfesionalEspecialidad, // Nombre de la tabla en la base de datos
+            model: ProfesionalEspecialidad, 
             key: 'ID'
         }
     },
@@ -25,7 +25,7 @@ const Agenda = sequelize.define('Agenda', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Sucursal, // Nombre de la tabla en la base de datos
+            model: Sucursal, 
             key: 'ID'
         }
     },

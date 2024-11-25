@@ -1,9 +1,7 @@
-// Función que itera sobre el rango de fechas y crea los turnos
 const { Clasificacion, AgendaDia, Agenda, AgendaClasificacion, Profesional, Especialidad, ProfesionalEspecialidad, Persona, Sucursal, Dia, Turno, Paciente,ProfesionalDiasNoLaborables,Usuario } = require('../models/main');
 const { calcularTurnos, sumarUnDia } = require('../utils/funciones');
 const sequelize = require('../config/database');
 const { Op } = require('sequelize');  // Importar Op correctamente
-
 
 exports.listarTurnos = async (req, res) => {
   const agendaID = req.params.ID;
@@ -19,39 +17,44 @@ exports.listarTurnos = async (req, res) => {
     const fechasNoLaborables = diasNoLaborables.map(dia => dia.fecha);
 
     // Obtener los turnos que no caen en días no laborables
+    const whereConditions = { agendaID: agendaID };
+    
+    // Solo agregar el filtro de fechas no laborables si existe algún valor en fechasNoLaborables
+    if (fechasNoLaborables.length > 0) {
+      whereConditions.fecha = { [Op.notIn]: fechasNoLaborables };
+    }
+
     const turnos = await Turno.findAll({
-      where: {
-        fecha: { [Op.notIn]: fechasNoLaborables.length > 0 ? fechasNoLaborables : [''] },
-        agendaID: agendaID
-      },
-      attributes: ['ID', 'agendaID', 'fecha', 'hora_inicio', 'hora_final', 'motivo', 'pacienteID', 'estado_turno'] // Seleccionar solo los campos necesarios
+      where: whereConditions,
+      attributes: ['ID', 'agendaID', 'fecha', 'hora_inicio', 'hora_final', 'motivo', 'pacienteID', 'estado_turno']
     });
 
+    // Obtener los valores posibles del estado del turno
     const tipoTurnos = Turno.rawAttributes.estado_turno.values.map(value => {
       return { nombre: value }; // Generar un objeto para cada valor ENUM
     });
+
     // Convertir turnos a objetos planos
     const turnosPlanos = turnos.map(turno => turno.toJSON());
+
+    // Obtener la información de los pacientes
     const pacientes = await Paciente.findAll({
       attributes: ['ID', 'usuarioID', 'obra_social', 'dato_contacto'],
       include: [
-          {
-              model: Usuario,
-              attributes: ['ID'],
-              include: [
-                  {
-                      model: Persona,
-                      attributes: ['nombre','dni'],
-                    
-                  },
-              ]
-          }
-      ]
-  });  
-    
-  //res.json(pacientes);
+        {
+          model: Usuario,
+          attributes: ['ID'],
+          include: [
+            {
+              model: Persona,
+              attributes: ['nombre', 'dni'],
+            },
+          ],
+        },
+      ],
+    });
+
     // Enviar los turnos a la vista
-    //res.json(pacientes);
     res.render('listaTurnos', { turnos: turnosPlanos, tipoTurnos, pacientes });
   } catch (error) {
     console.error('Error al listar turnos:', error);
@@ -59,45 +62,7 @@ exports.listarTurnos = async (req, res) => {
   }
 };
 
-/*
-exports.actualizarTurnos = async (req,res) => {
-    const { pacienteID, estado_turno } = req.body; // Obtener los valores del cuerpo de la solicitud
-    const { ID } = req.params; // Obtener el valor del ID desde los parámetros de la URL
-  
-    try {
-      // Crear el objeto de campos que se van a actualizar
-      const updateFields = {};
-  
-      // Solo agregar los valores si están definidos
-      if (pacienteID) {
-        updateFields.pacienteID = pacienteID;
-      }
-      if (estado_turno) {
-        updateFields.estado_turno = estado_turno;
-      }
-  
-      // Actualizar el turno en la base de datos
-      const [updated] = await Turno.update(updateFields, {
-        where: { ID:ID } // Usamos el ID del turno que viene desde los parámetros
-      });
-  
-      if (updated) {
-        // Si el turno fue actualizado, redirigimos o mostramos un mensaje de éxito
-        //res.redirect(`/secretario/agenda/${ID}`);
-        res.json(updated)
-      } else {
-        // Si no se actualizó nada, enviar un mensaje de error
-        res.status(400).send('No se pudo actualizar el turno');
-      }
-    } catch (error) {
-      console.error('Error al actualizar el turno:', error);
-      res.status(500).send('Error al actualizar el turno');
-    }
-  };
-  */
-
-
-  exports.actualizarTurnos = async (req, res) => {
+exports.actualizarTurnos = async (req, res) => {
     try {
       // Extraemos los datos enviados desde el formulario
       const { ID, pacienteID, estado_turno } = req.body;
@@ -121,65 +86,13 @@ exports.actualizarTurnos = async (req,res) => {
   
       // Guardamos los cambios en la base de datos
       await turno.save();
-  
-      // Redirigimos o enviamos una respuesta de éxito
-      //res.status(200).json({ message: 'Turno actualizado exitosamente' });
+
       res.redirect('/secretario/lista/agendas')
     } catch (error) {
       console.error('Error al actualizar el turno:', error);
       res.status(500).json({ message: 'Error al actualizar el turno' });
     }
-  };
-
-
-
-
-/*
-exports.listarTurnos = async (req, res) => {
-  const agendaID = req.params.ID;  // Obtener el ID de la agenda desde la URL
-  const profesionalID = req.params.Pid;  // Obtener el ID del profesional desde la URL
-  
-  try {
-    // Obtener los días no laborables para el profesional
-    const diasNoLaborables = await ProfesionalDiasNoLaborables.findAll({
-      attributes: ['fecha'],
-      where: { profesionalID: profesionalID }
-    });
-
-    const fechasNoLaborables = diasNoLaborables.map(dia => dia.fecha);
-
-    // Verifica si fechasNoLaborables está vacío
-    if (fechasNoLaborables.length === 0) {
-      console.log('No hay días no laborables');
-    }
-
-    // Obtener los turnos que no caen en días no laborables
-    const turnos = await Turno.findAll({
-      where: {
-        fecha: { [Op.notIn]: fechasNoLaborables.length > 0 ? fechasNoLaborables : [''] },  // Si está vacío, pasa un arreglo vacío para no filtrar
-        agendaID: agendaID
-      }
-    });
-
-    // Agrupar los turnos por fecha
-    const turnosAgrupados = turnos.reduce((acc, turno) => {
-      const fecha = turno.fecha;
-      if (!acc[fecha]) {
-        acc[fecha] = [];
-      }
-      acc[fecha].push(turno);
-      return acc;
-    }, {});
-
-    // Renderizar los turnos agrupados en la vista 'listaTurnos'
-    res.render('listaTurnos', { turnosAgrupados });
-    //res.json(turnosAgrupados)
-  } catch (error) {
-    console.error('Error al listar turnos:', error);
-    res.status(500).send('Error al listar los turnos');
-  }
-};*/
-
+};
 
 exports.crearAgenda = async (req, res) => {
   const {
@@ -216,8 +129,6 @@ exports.crearAgenda = async (req, res) => {
           return agendaCreada; // Devolver la agenda creada para su uso posterior
       });
 
-        // Paso 2: Registrar los días seleccionados en la base de datos
-        // Registrar cada día y sus horarios en la tabla "dias_agendas"
         for (const dia of dias) {
             if (dia.horaInicioManiana) {
                 await AgendaDia.create({
@@ -297,22 +208,6 @@ exports.crearAgenda = async (req, res) => {
   }
 }; 
 
-/*
-exports.crearAgenda = async (req,res) =>{
-  const {
-    profesional,
-    especialidadID,
-    limiteSobreturnos,
-    sucursal,
-    duracionTurnos,
-    fechaDesde,
-    fechaHasta,
-    clasificacionExtra,
-    dias
-} = req.body;
-res.json(sumarUnDia(fechaHasta));
-}*/
-
 exports.listarAgendas = async(req,res) => {
   try{
 
@@ -348,7 +243,6 @@ exports.listarAgendas = async(req,res) => {
       console.error('Error al obtner las especialidades relacionadas a los profesionales',error)
   }
 }
-
 
 exports.renderCrearAgenda = async(req,res) =>{
   try{
@@ -394,5 +288,3 @@ exports.renderCrearAgenda = async(req,res) =>{
     console.error('Error al renderizar crear agenda',error);
   }
 } 
-
-

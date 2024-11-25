@@ -14,7 +14,7 @@ exports.renderAgregarDiaNoLaborable = async (req, res) => {
       ]
     });
     // Asegúrate de pasar profesionales como una propiedad del objeto
-  //  res.json(profesionales);
+    //  res.json(profesionales);
     res.render('agregardianl', { profesionales});
   } catch (error) {
     console.error('Error al obtener profesionales:', error);

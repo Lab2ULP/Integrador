@@ -45,7 +45,6 @@ exports.editar = async (req, res) => {
         );
 
         if (actualizado) {
-            // Si se actualizó correctamente, redirigir o enviar respuesta adecuada
             res.redirect('/clasificaciones/listar'); // Redirige a la lista de clasificaciones
         } else {
             res.status(404).json({ message: 'Clasificación no encontrada' });
