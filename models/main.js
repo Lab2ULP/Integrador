@@ -29,7 +29,12 @@ Especialidad.belongsToMany(Profesional, {
     timestamps:false
 });
 
+Paciente.belongsTo(Persona, { foreignKey: 'personaID' });
+Persona.hasOne(Paciente, { foreignKey: 'personaID' });
+
 Usuario.belongsTo(Persona, { foreignKey: 'personaID' });
+
+Paciente.belongsTo(Usuario,{foreignKey:'usuarioID'})
 
 Turno.belongsTo(Paciente, { foreignKey: 'pacienteID' });
 
@@ -40,6 +45,8 @@ Persona.hasOne(Profesional, { foreignKey: 'personaID' });
 
 ProfesionalEspecialidad.belongsTo(Especialidad,{foreignKey:'especialidadID'})
 ProfesionalEspecialidad.belongsTo(Profesional,{foreignKey:'profesionalID'})
+ProfesionalEspecialidad.hasMany(Agenda, { foreignKey: 'prof_especialidadID' });
+
 
 // Definir la relación entre Agenda y ProfesionalEspecialidad
 Agenda.belongsTo(ProfesionalEspecialidad, { foreignKey: 'prof_especialidadID' });

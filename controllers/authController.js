@@ -29,7 +29,7 @@ exports.iniciarSesion = async (req, res) => {
     } else if (usuario.rolID == 2) {
       res.redirect('/secretario/lista/agendas');
     } else {
-      res.render('usuarioPrincipal');
+      res.redirect('/pacientes/principal');
     }
   } catch (error) {
     console.error(error);

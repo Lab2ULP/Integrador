@@ -9,6 +9,10 @@ router.get('/crear',(req, res) => {
 });
 
 router.post('/crear',pacienteController.crearPaciente);
+router.get('/principal',pacienteController.principalRender);
+router.get('/obtenerByEspecialidad/:especialidadID',pacienteController.getProfesionalesByEspecialidad)
+router.get('/obtenerTurnos/:profesionalID/:especialidadID', pacienteController.getTurnosByProfesionalAndEspecialidad);
+
 
 module.exports = router;
 
