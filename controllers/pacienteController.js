@@ -77,7 +77,7 @@ exports.getTurnosByProfesionalAndEspecialidad = async (req, res) => {
 
   try {
       // 1. Buscar el ID de la tabla `especialidades_profesionales` que coincide con el profesional y la especialidad
-      const especialidadProfesional = await db.ProfesionalEspecialidad.findOne({
+      const especialidadProfesional = await ProfesionalEspecialidad.findOne({
           where: {
               profesionalID,
               especialidadID,

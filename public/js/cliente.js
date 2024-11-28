@@ -56,11 +56,36 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      turnos.forEach(turno => {
-        const li = document.createElement("li");
-        li.textContent = `Fecha: ${turno.fecha}, Hora: ${turno.hora_inicio} - ${turno.hora_final}, Estado: ${turno.estado}, Paciente: ${turno.paciente}`;
-        listaTurnos.appendChild(li);
-      });
+      // Agrupar turnos por fecha
+      const turnosPorFecha = turnos.reduce((acc, turno) => {
+        acc[turno.fecha] = acc[turno.fecha] || [];
+        acc[turno.fecha].push(turno);
+        return acc;
+      }, {});
+
+      // Renderizar turnos agrupados por fecha
+      for (const fecha in turnosPorFecha) {
+        // Encabezado para la fecha
+        const fechaHeader = document.createElement("h3");
+        fechaHeader.textContent = `Fecha: ${fecha}`;
+        listaTurnos.appendChild(fechaHeader);
+
+        // Lista de turnos para esta fecha
+        const ul = document.createElement("ul");
+        turnosPorFecha[fecha].forEach(turno => {
+          const li = document.createElement("li");
+
+          // Convertir estado a minúsculas para comparación
+          const estadoNormalizado = turno.estado.toLowerCase();
+
+          // Asignar clase según el estado del turno
+          li.className = estadoNormalizado === "libre" ? "turno-libre" : "turno-ocupado";
+
+          li.textContent = `Hora: ${turno.hora_inicio} - ${turno.hora_final}, Estado: ${turno.estado}, Paciente: ${turno.paciente}`;
+          ul.appendChild(li);
+        });
+        listaTurnos.appendChild(ul);
+      }
     } catch (error) {
       console.error("Error al cargar turnos:", error);
       listaTurnos.innerHTML = '<li>-- Error al cargar turnos --</li>';
