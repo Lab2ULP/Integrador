@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const Profesional = require('./profesional'); // Importamos el modelo Profesional
+const Profesional = require('./profesional');
 
 const Especialidad = sequelize.define('Especialidad', {
     ID: {

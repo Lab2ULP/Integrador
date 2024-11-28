@@ -13,4 +13,5 @@ router.get('/borrar/:id', personaController.renderBorrarPersona); // Vista para 
 router.put('/:id', personaController.updatePersona); // Actualizar una persona
 router.delete('/:id', personaController.deletePersona); // Eliminar una persona
 router.post('/editar/:id', personaController.editarPersona); // editar persona
+
 module.exports = router;

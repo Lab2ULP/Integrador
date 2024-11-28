@@ -1,26 +1,30 @@
 doctype html
 html
   head
-    title Aplicación
-    
-
+    title Mi Aplicación
+    link(rel="stylesheet" href="/styles/layoutAdmin.css") 
   body
+    // Header con título y menú de navegación
     header
-      h1 Mi Aplicación
-      nav
-        a(href="/") Inicio
-        a(href="/otra-ruta") Otra sección
+      .container
+        h1 Mi Aplicación
+        nav
+          a(href="/") Inicio
+          a(href="/otra-ruta") Otra sección
 
-    .container
+    // Contenedor principal con el menú lateral y el contenido
+    .container-main
       aside
+        h3 Menú de navegación
         ul
           li: a(href="/profesionales/profesionalesDnl") Dias no laborables
           li: a(href="/clasificaciones/listar") Clasificaciones
-          li: a(href="/profesionales/lista") Lista de medicos 
-          li: a(href="/diasAgenda/todos") Dias Agendas
+          li: a(href="/profesionales/lista") Lista de médicos
+          li: a(href="/diasAgenda/todos") Días Agenda
           li: a(href="/turnos/todos") Turnos
       main
         block content
 
+    // Footer con copyright
     footer
       p © 2024 Mi Aplicación

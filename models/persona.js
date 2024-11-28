@@ -25,7 +25,8 @@ const Persona = sequelize.define('Persona',{
   }
 },{
     modelName: 'Persona',
-    timestamps:false
+    timestamps:false,
+    tableName:'personas'
 })
 
 

@@ -1,13 +1,13 @@
 const Profesional = require('./profesional');
 const Especialidad = require('./especialidad');
 const Persona = require('./persona')
-const Sucursal = require('./sucursal'); // Importar el modelo Sucursal
-const Agenda = require('./agenda'); // Importar el modelo Agenda
-const ProfesionalEspecialidad = require('./profesionalEspecialidad'); // Importar el modelo ProfesionalEspecialidad
+const Sucursal = require('./sucursal'); 
+const Agenda = require('./agenda'); 
+const ProfesionalEspecialidad = require('./profesionalEspecialidad');
 const Dia = require('./dia');
-const AgendaDia = require('./agendaDia'); // Importar el nuevo modelo
-const Clasificacion = require('./clasificacion'); // Importar el modelo Clasificacion
-const AgendaClasificacion = require('./agendaClasificacion'); // Importar el nuevo modelo
+const AgendaDia = require('./agendaDia'); 
+const Clasificacion = require('./clasificacion'); 
+const AgendaClasificacion = require('./agendaClasificacion'); 
 const ProfesionalDiasNoLaborables = require('./profesionalDiasNoLaborables')
 const DiasNoLaborables = require('./diasNoLaborables');
 const Turno = require('./turno');
@@ -29,8 +29,12 @@ Especialidad.belongsToMany(Profesional, {
     timestamps:false
 });
 
-// En el modelo Usuario
+Paciente.belongsTo(Persona, { foreignKey: 'personaID' });
+Persona.hasOne(Paciente, { foreignKey: 'personaID' });
+
 Usuario.belongsTo(Persona, { foreignKey: 'personaID' });
+
+Paciente.belongsTo(Usuario,{foreignKey:'usuarioID'})
 
 Turno.belongsTo(Paciente, { foreignKey: 'pacienteID' });
 
@@ -41,6 +45,8 @@ Persona.hasOne(Profesional, { foreignKey: 'personaID' });
 
 ProfesionalEspecialidad.belongsTo(Especialidad,{foreignKey:'especialidadID'})
 ProfesionalEspecialidad.belongsTo(Profesional,{foreignKey:'profesionalID'})
+ProfesionalEspecialidad.hasMany(Agenda, { foreignKey: 'prof_especialidadID' });
+
 
 // Definir la relación entre Agenda y ProfesionalEspecialidad
 Agenda.belongsTo(ProfesionalEspecialidad, { foreignKey: 'prof_especialidadID' });
@@ -48,7 +54,7 @@ Agenda.belongsTo(ProfesionalEspecialidad, { foreignKey: 'prof_especialidadID' })
 // Definir la relación entre Agenda y Sucursal
 Agenda.belongsTo(Sucursal, { foreignKey: 'sucursalID' });
 
-Profesional.belongsTo(Persona, { foreignKey: 'personaID' }); // Asume que la columna en Profesional es personaID
+Profesional.belongsTo(Persona, { foreignKey: 'personaID' }); 
 ProfesionalDiasNoLaborables.belongsTo(Profesional, { foreignKey: 'profesionalID'});
 ProfesionalDiasNoLaborables.belongsTo(DiasNoLaborables, { foreignKey: 'dia_no_laborablesID'});
 
@@ -123,4 +129,3 @@ module.exports = {
     Paciente,
     Usuario
 };
-

@@ -2,19 +2,20 @@ doctype html
 html
   head
     title Iniciar Sesión
-    link(rel="stylesheet" href="/css/style.css") 
+    link(rel="stylesheet" href="/styles/login.css") 
   body
-    h1 Iniciar Sesión
-    form(action="/auth/login", method="POST")
-      label(for="email") email:
-      input(type="text" name="email" required placeholder="Ingresa tu email")
-      br
+    .container
+      .login-card
+        h1 Iniciar Sesión
+        form(action="/auth/login", method="POST")
+          label(for="email") Email:
+          input(type="text" name="email" required placeholder="Ingresa tu email")
 
-      label(for="password") Contraseña:
-      input(type="password" name="password" required placeholder="Ingresa tu contraseña")
-      br
+          label(for="password") Contraseña:
+          input(type="password" name="password" required placeholder="Ingresa tu contraseña")
 
-      button(type="submit") Iniciar Sesión
+          button(type="submit") Iniciar Sesión
 
-    p No tienes cuenta? 
-      a(href="/pacientes/crear") Regístrate
+        .register
+          p No tienes cuenta? 
+          a(href="/pacientes/crear") Regístrate

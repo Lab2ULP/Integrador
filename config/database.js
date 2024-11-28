@@ -1,42 +1,20 @@
 const { Sequelize } = require('sequelize');
 
+//Este lo usamos para el servidor online
+/*const sequelize = new Sequelize({
+  host: process.env.DB_HOST,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
+  dialect: 'mysql',
+});*/
 
-/*
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: 'mysql'
-  }
-);*/
-
-
-
-// Configuración de Sequelize
-
+//Este se usa de forma local
 const sequelize = new Sequelize('agenda_consultorio', 'root', '', {
   host: 'localhost',
   dialect: 'mysql',
 });
-/*
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: 'mysql',
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false
-      }
-    }
-  }
-); */
+
 
 module.exports = sequelize;

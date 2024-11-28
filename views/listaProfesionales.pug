@@ -1,24 +1,32 @@
 extends layoutAdmin
 
 block content
-  h1 Lista de Médicos con Especialidades
-  table
-    thead
-      tr
-        th Nombre
-        th Especialidades
-    tbody
-      each medico in profesionales
+  .main-content
+    h1 Lista de Médicos con Especialidades
+
+    table
+      thead
         tr
-          td= medico.Persona.nombre
-          td
-            ul
-              each especialidad in medico.Especialidads 
-                li= especialidad.nombre
-          td 
-            form(action="/profesionales/statechange", method="post") 
-             input(type="hidden", name="profesionalID", value=medico.ID)
-             input(type="hidden", name="estado", value = medico.estado ? '0' : '1')
-             button(type="submit")= medico.estado ? 'Desactivar' : 'Activar' 
-            a(href=`/profesionales/edit/${medico.ID}`) Editar
+          th Nombre
+          th Especialidades
+          th Estado
+          th Acción
+      tbody
+        each medico in profesionales
+          tr
+            td= medico.Persona.nombre
+            td
+              ul
+                each especialidad in medico.Especialidads
+                  li= especialidad.nombre
+            td
+              span= medico.estado ? 'Activo' : 'Inactivo'
+            td
+              .acciones
+                form(action="/profesionales/statechange", method="post")
+                  input(type="hidden", name="profesionalID", value=medico.ID)
+                  input(type="hidden", name="estado", value = medico.estado ? '0' : '1')
+                  button(type="submit")= medico.estado ? 'Desactivar' : 'Activar' 
+                a(href=`/profesionales/edit/${medico.ID}`) Editar
+
   a.btn(href='/profesionales/crear') Crear profesional
