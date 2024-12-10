@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Fetch para obtener turnos según especialidad y profesional
       const response = await fetch(`/pacientes/obtenerTurnos/${profesionalID}/${especialidadID}`);
       const turnos = await response.json();
+      console.log(turnos)
 
       // Renderizar los turnos en la lista
       listaTurnos.innerHTML = ""; // Limpiar la lista de turnos
@@ -81,8 +82,32 @@ document.addEventListener("DOMContentLoaded", () => {
           // Asignar clase según el estado del turno
           li.className = estadoNormalizado === "libre" ? "turno-libre" : "turno-ocupado";
 
-          li.textContent = `Hora: ${turno.hora_inicio} - ${turno.hora_final}, Estado: ${turno.estado}, Paciente: ${turno.paciente}`;
-          ul.appendChild(li);
+          li.textContent = `Hora: ${turno.hora_inicio} - ${turno.hora_final}, Estado: ${turno.estado}`;
+          
+
+          if(turno.estado === "Libre"){
+            const boton = document.createElement("button")
+            const formulario = document.createElement("form")
+            const texto = document.createElement("input")
+            formulario.appendChild(texto)
+            formulario.appendChild(boton)
+            formulario.setAttribute("method","POST")
+            formulario.action = "/turnos/reservar"
+            boton.textContent='Reservar'
+            texto.setAttribute("hidden",true)
+            texto.value=turno.ID
+            boton.addEventListener("click",async function() {
+
+              fetch(`/turnos/reservar`)
+              
+            })
+            ul.appendChild(li)
+            ul.appendChild(formulario)
+          }else{
+            ul.appendChild(li);
+            console.log("sali por aca")
+          }
+
         });
         listaTurnos.appendChild(ul);
       }

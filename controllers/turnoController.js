@@ -88,6 +88,18 @@ exports.eliminarTurno = async (req, res) => {
       console.error("Error al eliminar el turno:", error);
       res.status(500).json({ error: "Error interno del servidor" });
     }
-  };
+}; 
   
+exports.reservarTurno = async (req, res) => {
+    try {
+      const ID = req.body
+  
+      const estado_turno = "Reservado"
+      
 
+      res.redirect('/pacientes/principal');
+    } catch (error) {
+      console.error("Error al actualizar el turno:", error);
+      res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
