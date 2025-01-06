@@ -88,35 +88,6 @@ exports.eliminarTurno = async (req, res) => {
       console.error("Error al eliminar el turno:", error);
       res.status(500).json({ error: "Error interno del servidor" });
     }
-}; 
+  };
   
-exports.reservarTurno = async (req, res) => {
-  try {
-    const { ID } = req.params; // Obtener el ID del turno desde los parámetros de la URL
-
-    const estado_turno = "Reservado";
-
-    // Actualizar el estado del turno en la base de datos
-    const resultado = await Turno.update(
-      { estado_turno }, // Valores a actualizar
-      {
-        where: { ID }, // Condición para encontrar el turno
-      }
-    );
-
-    if (resultado[0] === 0) {
-      // Si no se actualizó ningún turno, significa que no se encontró el ID
-      return res
-        .status(404)
-        .json({ error: "No se encontró el turno con el ID proporcionado." });
-    }
-
-    // Redirigir después de actualizar
-    res.redirect('/pacientes/principal');
-  } catch (error) {
-    console.error("Error al actualizar el turno:", error);
-    res.status(500).json({ error: "Error interno del servidor" });
-  }
-};
-
 
