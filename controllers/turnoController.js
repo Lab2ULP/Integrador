@@ -74,7 +74,6 @@ exports.eliminarTurno = async (req, res) => {
     try {
 
       const { ID } = req.body;
-  
       // Intentar eliminar el turno
       const eliminado = await Turno.destroy({ 
         where: { 
@@ -90,15 +89,19 @@ exports.eliminarTurno = async (req, res) => {
     }
 }; 
   
-exports.reservarTurno = async (req, res) => {
+/*exports.reservarTurno = async (req, res) => {
   try {
     const { ID } = req.params; // Obtener el ID del turno desde los parámetros de la URL
-
+    //const pacienteID = String(req.session.userId)
     const estado_turno = "Reservado";
+
+    const paciente = Paciente.findOne({where:{usuarioID:req.session.userId}});
+
+    const pacienteID = paciente.ID
 
     // Actualizar el estado del turno en la base de datos
     const resultado = await Turno.update(
-      { estado_turno }, // Valores a actualizar
+      { estado_turno,pacienteID }, // Valores a actualizar
       {
         where: { ID }, // Condición para encontrar el turno
       }
@@ -118,5 +121,27 @@ exports.reservarTurno = async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
+*/
+exports.reservarTurno = async (req, res) => {
+  try {
+    const { ID } = req.params; // ID del turno desde la URL
+    const estado_turno = "Reservado";
 
+    // Buscar el paciente asociado al usuario actual
+    const paciente = await Paciente.findOne({ where: { usuarioID: req.session.userId }});
 
+    const pacienteID = paciente.ID; // Obtener el ID del paciente
+
+    // Actualizar el estado del turno en la base de datos
+    const resultado = await Turno.update(
+      { estado_turno, pacienteID }, // Valores a actualizar
+      { where: { ID } } // Condición para encontrar el turno
+    );
+
+    // Redirigir después de actualizar correctamente
+    res.redirect('/pacientes/principal');
+  } catch (error) {
+    console.error("Error al actualizar el turno:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};

@@ -29,8 +29,8 @@ Especialidad.belongsToMany(Profesional, {
     timestamps:false
 });
 
-Paciente.belongsTo(Persona, { foreignKey: 'personaID' });
-Persona.hasOne(Paciente, { foreignKey: 'personaID' });
+//Paciente.belongsTo(Persona, { foreignKey: 'personaID' });
+//Persona.hasOne(Paciente, { foreignKey: 'personaID' });
 
 Usuario.belongsTo(Persona, { foreignKey: 'personaID' });
 
