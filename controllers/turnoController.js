@@ -87,8 +87,9 @@ exports.eliminarTurno = async (req, res) => {
       console.error("Error al eliminar el turno:", error);
       res.status(500).json({ error: "Error interno del servidor" });
     }
-}; 
+  };
   
+
 /*exports.reservarTurno = async (req, res) => {
   try {
     const { ID } = req.params; // Obtener el ID del turno desde los parámetros de la URL
@@ -129,6 +130,8 @@ exports.reservarTurno = async (req, res) => {
 
     // Buscar el paciente asociado al usuario actual
     const paciente = await Paciente.findOne({ where: { usuarioID: req.session.userId }});
+
+
 
     const pacienteID = paciente.ID; // Obtener el ID del paciente
 
