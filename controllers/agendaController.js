@@ -209,6 +209,7 @@ exports.crearAgenda = async (req, res) => {
 }; 
 
 exports.listarAgendas = async(req,res) => {
+  const sucursalId = req.body.sucursal;
   try{
 
     const agendas = await Agenda.findAll({
@@ -288,3 +289,23 @@ exports.renderCrearAgenda = async(req,res) =>{
     console.error('Error al renderizar crear agenda',error);
   }
 } 
+
+exports.listarSucursales = async (req, res) => {
+  try {
+    // Consultar todas las sucursales en la base de datos
+    const sucursales = await Sucursal.findAll();
+
+    // Verificar si se encontraron sucursales
+    if (sucursales.length === 0) {
+      return res.status(404).json({ mensaje: "No se encontraron sucursales." });
+    }
+
+    // Enviar las sucursales como respuesta
+    //res.status(200).json(sucursales);
+    res.render('SelectSucursal',{sucursales});
+  } catch (error) {
+    // Manejar errores
+    console.error("Error al listar sucursales:", error);
+    res.status(500).json({ mensaje: "Error interno del servidor." });
+  }
+};
