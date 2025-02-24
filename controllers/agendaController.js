@@ -209,9 +209,17 @@ exports.crearAgenda = async (req, res) => {
 }; 
 
 exports.listarAgendas = async(req,res) => {
+  const sucursalId = req.query.sucursal;
+  const fechaActual = new Date();
+  console.log(`Sucursal ID: ${sucursalId}`)
   try{
-
+    //TO DO: Modificarlo para que busque las agendas segun la variable sucursalId
     const agendas = await Agenda.findAll({
+      where:{
+        sucursalID:sucursalId,
+        fecha_desde: {[Op.lte]:fechaActual},
+        fecha_hasta: {[Op.gte]:fechaActual},
+      },
       attributes: ['ID', 'sobre_turnos_limites', 'prof_especialidadID', 'sucursalID', 'duracion_turnos', 'fecha_desde', 'fecha_hasta'],
       include: [
           {
@@ -288,3 +296,23 @@ exports.renderCrearAgenda = async(req,res) =>{
     console.error('Error al renderizar crear agenda',error);
   }
 } 
+
+exports.listarSucursales = async (req, res) => {
+  try {
+    // Consultar todas las sucursales en la base de datos
+    const sucursales = await Sucursal.findAll();
+
+    // Verificar si se encontraron sucursales
+    if (sucursales.length === 0) {
+      return res.status(404).json({ mensaje: "No se encontraron sucursales." });
+    }
+
+    // Enviar las sucursales como respuesta
+    //res.status(200).json(sucursales);
+    res.render('SelectSucursal',{sucursales});
+  } catch (error) {
+    // Manejar errores
+    console.error("Error al listar sucursales:", error);
+    res.status(500).json({ mensaje: "Error interno del servidor." });
+  }
+};
