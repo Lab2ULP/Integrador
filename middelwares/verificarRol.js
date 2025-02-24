@@ -4,7 +4,13 @@ module.exports = (rolesPermitidos) => {
 
         if (!req.session.userId) {
             console.log('No autenticado, redirigiendo a login...');
-            return res.redirect('/auth/login');
+            return res.send(`
+                <script>
+                  window.alert('Tenes que iniciar sesion para acceder a esta pagina! Seras redirigido a nuestro LogIn');
+                  window.location.href = '/auth/login';
+                </script>
+              `);
+            //return res.redirect('/auth/login');
         }
 
         if (!rolesPermitidos.includes(req.session.rol)) {

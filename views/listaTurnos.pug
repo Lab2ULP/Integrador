@@ -20,7 +20,7 @@ block content
             tr
               td= turno.ID
               td= turno.agendaID
-              td= new Date(turno.fecha).toLocaleDateString() 
+              td= new Date(turno.fecha).toLocaleDateString()
               td= turno.hora_inicio
               td= turno.hora_final
               td
@@ -37,9 +37,39 @@ block content
                   // Selección de Estado
                   label(for='estado_turno') Estado:
                   select(name='estado_turno')
-                    each estado in tipoTurnos 
-                      option(value=estado.nombre, selected=turno.estado_turno == estado.nombre)= estado.nombre 
-                
+                    each estado in tipoTurnos
+                      option(value=estado.nombre, selected=turno.estado_turno == estado.nombre)= estado.nombre
+
                   button(type='submit') Actualizar Turno
+
+                // Botón para crear sobreturno (solo para estados específicos)
+                if ['Reservado', 'Confirmado', 'En consulta'].includes(turno.estado_turno)
+                  button(type='button', onclick=`mostrarFormularioSobreturno('${turno.ID}')`) Crear Sobreturno
+
+                // Formulario para crear sobreturno (oculto inicialmente)
+                div(id=`formularioSobreturno-${turno.ID}`, style='display: none; margin-top: 10px;')
+                  form(action='/secretario/turnos/crearSobreturno', method='POST')
+                    input(type='hidden', name='agendaID', value=turno.agendaID)
+                    input(type='hidden', name='fecha', value=turno.fecha)
+                    input(type='hidden', name='hora_inicio', value=turno.hora_inicio)
+                    input(type='hidden', name='hora_final', value=turno.hora_final)
+
+                    label(for='pacienteID') Seleccionar paciente:
+                    select(name='pacienteID')
+                      option(value='') Seleccionar paciente
+                      each paciente in pacientes
+                        option(value=paciente.ID)= paciente.Usuario.Persona.nombre + ' (' + paciente.Usuario.Persona.dni + ')'
+
+                    button(type='submit') Crear Sobreturno
   else
     p No hay turnos disponibles.
+
+  script.
+    function mostrarFormularioSobreturno(turnoID) {
+      const formulario = document.getElementById(`formularioSobreturno-${turnoID}`);
+      if (formulario.style.display === 'none') {
+        formulario.style.display = 'block';
+      } else {
+        formulario.style.display = 'none';
+      }
+    }
