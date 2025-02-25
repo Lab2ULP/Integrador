@@ -87,7 +87,7 @@ exports.actualizarTurnos = async (req, res) => {
       // Guardamos los cambios en la base de datos
       await turno.save();
 
-      res.redirect('/secretario/lista/agendas')
+      res.redirect('/secretario/sucursal')
     } catch (error) {
       console.error('Error al actualizar el turno:', error);
       res.status(500).json({ message: 'Error al actualizar el turno' });
@@ -199,7 +199,7 @@ exports.crearAgenda = async (req, res) => {
       
 
       // Redirigir después de que se complete la creación
-      res.redirect('/secretario/lista/agendas');
+      res.redirect('/secretario/sucursal');
     
 
   } catch (error) {
