@@ -16,7 +16,13 @@ exports.crearUsuario = async (req, res) => {
       rolID: 3 // Asumimos que el rol de 'Cliente' tiene ID 3
     });
 
-    res.redirect('/'); // Redirige al usuario al inicio o a la página que prefieras
+// Redirige al usuario al inicio o a la página que prefieras
+    res.send(`
+      <script>
+        alert('Usuario creado con exito.');
+        window.location.href = '/'; 
+      </script>
+    `);
   } catch (error) {
     console.error(error);
 

@@ -13,6 +13,11 @@ router.post('/eliminar', turnoController.eliminarTurno);
 
 router.post('/reservar/:ID',turnoController.reservarTurno);
 
+router.get('/secretario/turnos/crearSobreturno/:ID', turnoController.mostrarFormularioSobreturno);
+
+// Ruta para procesar la creación del sobreturno
+router.post('/secretario/turnos/crearSobreturno', turnoController.crearSobreturno);
+
 // Otras rutas relacionadas pueden agregarse aquí si es necesario
 
 module.exports = router;
