@@ -1,5 +1,5 @@
-const { Persona, Usuario, Paciente,Turno,Agenda,Profesional,Especialidad,ProfesionalEspecialidad } = require('../models/main');
-
+const { Persona, Usuario, Paciente,Turno,Agenda,Profesional,Especialidad,ProfesionalEspecialidad,Sucursal } = require('../models/main');
+const { Op } = require('sequelize');  // Importar Op correctamente
 
 exports.crearPaciente = async(req,res)=>{
     const { nombre, dni, nacimiento, email, password, obra_social, dato_contacto } = req.body;
@@ -33,6 +33,8 @@ exports.crearPaciente = async(req,res)=>{
 }
 
 exports.principalRender = async(req,res)=>{
+    const sucursalID = req.query.sucursal
+    req.session.sucursal = sucursalID
     try {
         const especialidades = await Especialidad.findAll({
             attributes:['ID','nombre']
@@ -74,6 +76,11 @@ exports.getProfesionalesByEspecialidad = async (req, res) => {
 
 exports.getTurnosByProfesionalAndEspecialidad = async (req, res) => {
   const { profesionalID, especialidadID } = req.params;
+  const sucursalId = req.session.sucursal;
+  const fechaActual = new Date().toISOString().split('T')[0];
+  console.log(`Sucursal ID ${sucursalId}`)
+  console.log(`profesionalID ${profesionalID}, especialidadID ${especialidadID}`)
+  console.log(`Fecha actual ${fechaActual}`)
 
   try {
       // 1. Buscar el ID de la tabla `especialidades_profesionales` que coincide con el profesional y la especialidad
@@ -92,6 +99,9 @@ exports.getTurnosByProfesionalAndEspecialidad = async (req, res) => {
       const agenda = await Agenda.findOne({
           where: {
               prof_especialidadID: especialidadProfesional.ID,
+              sucursalID: parseInt(sucursalId),
+              //fecha_desde: {[Op.lte]:fechaActual},
+              //fecha_hasta: {[Op.gte]:fechaActual},
           },
       });
 
@@ -99,6 +109,12 @@ exports.getTurnosByProfesionalAndEspecialidad = async (req, res) => {
           return res.status(404).json({ error: 'No se encontró una agenda asociada al profesional y especialidad seleccionados.' });
       }
 
+      if (agenda.ID) {
+        console.log(`ID de la agenda: ${agenda.ID}`)
+      } else {
+        console.log("No se encontró agenda")
+      }
+      
       // 3. Buscar los turnos asociados a la agenda
       const turnos = await Turno.findAll({
           where: {
@@ -136,3 +152,67 @@ exports.getTurnosByProfesionalAndEspecialidad = async (req, res) => {
       return res.status(500).json({ error: 'Ocurrió un error al obtener los turnos.' });
   }
 };
+
+exports.listarSucursales = async (req, res) => {
+    try {
+      // Consultar todas las sucursales en la base de datos
+      const sucursales = await Sucursal.findAll();
+  
+      // Verificar si se encontraron sucursales
+      if (sucursales.length === 0) {
+        return res.status(404).json({ mensaje: "No se encontraron sucursales." });
+      }
+  
+      // Enviar las sucursales como respuesta
+      //res.status(200).json(sucursales);
+      res.render('selectSucursalPaciente',{sucursales});
+    } catch (error) {
+      // Manejar errores
+      console.error("Error al listar sucursales:", error);
+      res.status(500).json({ mensaje: "Error interno del servidor." });
+    }
+};
+
+exports.listarAgendas = async(req,res) => {
+  const sucursalId = req.query.sucursal;
+  const fechaActual = new Date();
+  console.log(`Sucursal ID: ${sucursalId}`)
+  try{
+    //TO DO: Modificarlo para que busque las agendas segun la variable sucursalId
+    const agendas = await Agenda.findAll({
+      where:{
+        sucursalID:sucursalId,
+        fecha_desde: {[Op.lte]:fechaActual},
+        fecha_hasta: {[Op.gte]:fechaActual},
+      },
+      attributes: ['ID', 'sobre_turnos_limites', 'prof_especialidadID', 'sucursalID', 'duracion_turnos', 'fecha_desde', 'fecha_hasta'],
+      include: [
+          {
+              model: ProfesionalEspecialidad,
+              as: 'EspecialidadesProfesionale',
+              attributes: ['ID'],
+              include: [
+                  {
+                      model: Profesional,
+                      attributes: ['ID'],
+                      include: [
+                          {
+                              model: Persona,
+                              attributes: ['nombre']
+                          }
+                      ]
+                  },
+                  {
+                      model: Especialidad,
+                      attributes: ['nombre']
+                  }
+              ]
+          }
+      ]
+  });  
+      //res.json(agendas[0].EspecialidadesProfesionale)
+      res.render('listaMedicos',{agendas})      
+  } catch (error) {
+      console.error('Error al obtner las especialidades relacionadas a los profesionales',error)
+  }
+}

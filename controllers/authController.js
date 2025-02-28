@@ -68,7 +68,7 @@ exports.iniciarSesion = async (req, res) => {
       } else if (usuario.rolID == 2) {
           res.redirect('/secretario/sucursal');
       } else {
-          res.redirect('/pacientes/principal');
+          res.redirect('/pacientes/sucursal');
       }
   } catch (error) {
       console.error(error);
