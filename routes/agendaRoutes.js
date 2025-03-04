@@ -10,4 +10,5 @@ router.post('/crear',verificarRol([2]),agendaController.crearAgenda)
 router.get('/agenda/:ID/:Pid',verificarRol([2]),agendaController.listarTurnos)
 router.post('/turnos/actualizarEstado',verificarRol([2]),agendaController.actualizarTurnos)
 router.get('/sucursal',verificarRol([2]),agendaController.listarSucursales)
+router.post('/turnos/crearSobreturno',verificarRol([2]),agendaController.crearSobreturno)
 module.exports = router;

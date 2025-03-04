@@ -323,3 +323,53 @@ exports.listarSucursales = async (req, res) => {
     res.status(500).json({ mensaje: "Error interno del servidor." });
   }
 };
+
+exports.crearSobreturno = async (req, res) => {
+  const { agendaID, fecha, hora_inicio, hora_final, pacienteID } = req.body;
+  const motivo =""
+
+  try {
+    // Obtener la agenda para verificar el límite de sobreturnos
+    const agenda = await Agenda.findByPk(agendaID);
+
+    if (!agenda) {
+      return res.status(404).send('Agenda no encontrada');
+    }
+
+    // Verificar si aún hay sobreturnos disponibles
+    if (agenda.sobre_turnos_limites <= 0) {
+      return res.send(`
+        <script>
+          alert('No hay más sobreturnos disponibles.');
+        </script>
+      `);
+    }
+
+    // Crear el sobreturno
+    await Turno.create({
+      agendaID,
+      fecha,
+      hora_inicio,
+      hora_final,
+      motivo,
+      pacienteID,
+      estado_turno: 'sobreturno',
+    });
+
+    // Descontar el límite de sobreturnos
+    await Agenda.update(
+      { sobre_turnos_limites: agenda.sobre_turnos_limites - 1 },
+      { where: { ID: agendaID } }
+    );
+
+    // Mostrar un mensaje de éxito y cerrar la pestaña
+    res.send(`
+      <script>
+        alert('Sobreturno creado correctamente.');
+      </script>
+    `);
+  } catch (error) {
+    console.error('Error al crear el sobreturno:', error);
+    res.status(500).send('Error al crear el sobreturno');
+  }
+}

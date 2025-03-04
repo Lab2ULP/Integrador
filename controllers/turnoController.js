@@ -139,7 +139,7 @@ exports.reservarTurno = async (req, res) => {
     );
 
     // Redirigir después de actualizar correctamente
-    res.redirect('/pacientes/principal');
+    res.redirect('/pacientes/sucursal');
   } catch (error) {
     console.error("Error al actualizar el turno:", error);
     res.status(500).json({ error: "Error interno del servidor" });
