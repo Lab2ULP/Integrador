@@ -150,12 +150,16 @@ exports.reservarTurno = async (req, res) => {
     );
 
     // Redirigir después de actualizar correctamente
+
+    res.redirect('/pacientes/sucursal');
+
     res.send(`
       <script>
         alert('Reserva realizada con exito.');
         window.location.href = '/pacientes/principal'; 
       </script>
     `);
+
   } catch (error) {
     console.error("Error al actualizar el turno:", error);
     res.status(500).json({ error: "Error interno del servidor" });

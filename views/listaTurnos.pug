@@ -42,10 +42,12 @@ block content
 
                   button(type='submit') Actualizar Turno
 
+
                   // Botón para crear sobreturno (solo para estados específicos)
                 if ['Reservado', 'Confirmado', 'En consulta'].includes(turno.estado_turno)
                   form(action=`/secretario/turnos/crearSobreturno/${turno.ID}`, method='GET', target='_blank', style='display:inline-block')
                     button(type='submit') Crear Sobreturno    
+
 
                 // Formulario para crear sobreturno (oculto inicialmente)
                 div(id=`formularioSobreturno-${turno.ID}`, style='display: none; margin-top: 10px;')
@@ -73,4 +75,8 @@ block content
       } else {
         formulario.style.display = 'none';
       }
+
     }
+
+    }
+

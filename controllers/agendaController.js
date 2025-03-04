@@ -63,11 +63,49 @@ exports.listarTurnos = async (req, res) => {
 };
 
 exports.actualizarTurnos = async (req, res) => {
+
+    try {
+      // Extraemos los datos enviados desde el formulario
+      const { ID, pacienteID, estado_turno } = req.body;
+  
+      // Verificamos que el ID del turno esté presente
+      if (!ID) {
+        return res.status(400).json({ message: 'El ID del turno es requerido' });
+      }
+  
+      // Buscamos el turno en la base de datos
+      const turno = await Turno.findByPk(ID);
+  
+      // Verificamos que el turno existe
+      if (!turno) {
+        return res.status(404).json({ message: 'Turno no encontrado' });
+      }
+  
+      // Actualizamos los campos del turno según los datos enviados
+      turno.pacienteID = pacienteID || null; // Si no se seleccionó paciente, asignamos null
+      turno.estado_turno = estado_turno;
+  
+      // Guardamos los cambios en la base de datos
+      await turno.save();
+
+
+      res.send(`
+        <script>
+          window.alert('Turno actualizado correctamente!!!');
+          window.location.href = '/secretario/sucursal';
+        </script>
+      `);
+      //res.redirect('/secretario/sucursal')
+    } catch (error) {
+      console.error('Error al actualizar el turno:', error);
+      res.status(500).json({ message: 'Error al actualizar el turno' });
+
   try {
     const { ID, pacienteID, estado_turno } = req.body;
 
     if (!ID) {
       return res.status(400).json({ message: 'El ID del turno es requerido' });
+
     }
 
     const turno = await Turno.findByPk(ID);
@@ -187,9 +225,15 @@ exports.crearAgenda = async (req, res) => {
           }
         }
 
+
+      // Redirigir después de que se complete la creación
+      res.redirect('/secretario/sucursal');
+    
+
         fechaTurno.setDate(fechaTurno.getDate() + 1);
       }
     }
+
 
     // Enviar un script que muestre un alert y redirija
     res.send(`
@@ -312,3 +356,53 @@ exports.listarSucursales = async (req, res) => {
     res.status(500).json({ mensaje: "Error interno del servidor." });
   }
 };
+
+exports.crearSobreturno = async (req, res) => {
+  const { agendaID, fecha, hora_inicio, hora_final, pacienteID } = req.body;
+  const motivo =""
+
+  try {
+    // Obtener la agenda para verificar el límite de sobreturnos
+    const agenda = await Agenda.findByPk(agendaID);
+
+    if (!agenda) {
+      return res.status(404).send('Agenda no encontrada');
+    }
+
+    // Verificar si aún hay sobreturnos disponibles
+    if (agenda.sobre_turnos_limites <= 0) {
+      return res.send(`
+        <script>
+          alert('No hay más sobreturnos disponibles.');
+        </script>
+      `);
+    }
+
+    // Crear el sobreturno
+    await Turno.create({
+      agendaID,
+      fecha,
+      hora_inicio,
+      hora_final,
+      motivo,
+      pacienteID,
+      estado_turno: 'sobreturno',
+    });
+
+    // Descontar el límite de sobreturnos
+    await Agenda.update(
+      { sobre_turnos_limites: agenda.sobre_turnos_limites - 1 },
+      { where: { ID: agendaID } }
+    );
+
+    // Mostrar un mensaje de éxito y cerrar la pestaña
+    res.send(`
+      <script>
+        alert('Sobreturno creado correctamente.');
+      </script>
+    `);
+  } catch (error) {
+    console.error('Error al crear el sobreturno:', error);
+    res.status(500).send('Error al crear el sobreturno');
+  }
+}

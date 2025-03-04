@@ -1,0 +1,10 @@
+extends layoutSecretario
+
+block content
+  h1 Seleccione una sucursal para consultar disponibilidad de turnos
+  form(action="/pacientes/principal", method="GET")
+    label(for="sucursal") Sucursal:
+    select(name="sucursal", ID="sucursal")
+      each sucursal in sucursales
+        option(value=sucursal.ID)= sucursal.nombre
+    button(type="submit") Seleccionar
