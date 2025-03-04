@@ -1,0 +1,25 @@
+extends layoutCliente
+
+block content
+  h2 Selección de turnos
+
+  form#filtroTurnos
+    div
+      label(for="especialidad") Especialidad:
+      select#especialidad(name="especialidad")
+        option(value="") -- Seleccione una especialidad --
+        each especialidad in especialidades
+          option(value=especialidad.ID) #{especialidad.nombre}
+
+    div
+      label(for="profesional") Profesional:
+      select#profesional(name="profesional" disabled)
+        option(value="") -- Seleccione un profesional --
+
+    div
+      label Turnos disponibles:
+      ul#listaTurnos
+        li -- Seleccione una especialidad y un profesional --
+
+  //- Archivo JavaScript para manejar la lógica de la vista
+  script(src="/js/cliente.js")

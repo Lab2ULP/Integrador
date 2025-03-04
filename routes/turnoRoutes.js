@@ -11,6 +11,8 @@ router.post('/actualizarEstado', turnoController.actualizarEstadoTurno);
 // Eliminar un turno
 router.post('/eliminar', turnoController.eliminarTurno);
 
+router.post('/reservar/:ID',turnoController.reservarTurno);
+
 // Otras rutas relacionadas pueden agregarse aquí si es necesario
 
 module.exports = router;

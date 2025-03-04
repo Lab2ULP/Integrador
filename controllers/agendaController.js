@@ -87,7 +87,14 @@ exports.actualizarTurnos = async (req, res) => {
       // Guardamos los cambios en la base de datos
       await turno.save();
 
-      res.redirect('/secretario/lista/agendas')
+
+      res.send(`
+        <script>
+          window.alert('Turno actualizado correctamente!!!');
+          window.location.href = '/secretario/sucursal';
+        </script>
+      `);
+      //res.redirect('/secretario/sucursal')
     } catch (error) {
       console.error('Error al actualizar el turno:', error);
       res.status(500).json({ message: 'Error al actualizar el turno' });
@@ -199,7 +206,7 @@ exports.crearAgenda = async (req, res) => {
       
 
       // Redirigir después de que se complete la creación
-      res.redirect('/secretario/lista/agendas');
+      res.redirect('/secretario/sucursal');
     
 
   } catch (error) {
@@ -209,9 +216,17 @@ exports.crearAgenda = async (req, res) => {
 }; 
 
 exports.listarAgendas = async(req,res) => {
+  const sucursalId = req.query.sucursal;
+  const fechaActual = new Date();
+  console.log(`Sucursal ID: ${sucursalId}`)
   try{
-
+    //TO DO: Modificarlo para que busque las agendas segun la variable sucursalId
     const agendas = await Agenda.findAll({
+      where:{
+        sucursalID:sucursalId,
+        fecha_desde: {[Op.lte]:fechaActual},
+        fecha_hasta: {[Op.gte]:fechaActual},
+      },
       attributes: ['ID', 'sobre_turnos_limites', 'prof_especialidadID', 'sucursalID', 'duracion_turnos', 'fecha_desde', 'fecha_hasta'],
       include: [
           {
@@ -288,3 +303,73 @@ exports.renderCrearAgenda = async(req,res) =>{
     console.error('Error al renderizar crear agenda',error);
   }
 } 
+
+exports.listarSucursales = async (req, res) => {
+  try {
+    // Consultar todas las sucursales en la base de datos
+    const sucursales = await Sucursal.findAll();
+
+    // Verificar si se encontraron sucursales
+    if (sucursales.length === 0) {
+      return res.status(404).json({ mensaje: "No se encontraron sucursales." });
+    }
+
+    // Enviar las sucursales como respuesta
+    //res.status(200).json(sucursales);
+    res.render('SelectSucursal',{sucursales});
+  } catch (error) {
+    // Manejar errores
+    console.error("Error al listar sucursales:", error);
+    res.status(500).json({ mensaje: "Error interno del servidor." });
+  }
+};
+
+exports.crearSobreturno = async (req, res) => {
+  const { agendaID, fecha, hora_inicio, hora_final, pacienteID } = req.body;
+  const motivo =""
+
+  try {
+    // Obtener la agenda para verificar el límite de sobreturnos
+    const agenda = await Agenda.findByPk(agendaID);
+
+    if (!agenda) {
+      return res.status(404).send('Agenda no encontrada');
+    }
+
+    // Verificar si aún hay sobreturnos disponibles
+    if (agenda.sobre_turnos_limites <= 0) {
+      return res.send(`
+        <script>
+          alert('No hay más sobreturnos disponibles.');
+        </script>
+      `);
+    }
+
+    // Crear el sobreturno
+    await Turno.create({
+      agendaID,
+      fecha,
+      hora_inicio,
+      hora_final,
+      motivo,
+      pacienteID,
+      estado_turno: 'sobreturno',
+    });
+
+    // Descontar el límite de sobreturnos
+    await Agenda.update(
+      { sobre_turnos_limites: agenda.sobre_turnos_limites - 1 },
+      { where: { ID: agendaID } }
+    );
+
+    // Mostrar un mensaje de éxito y cerrar la pestaña
+    res.send(`
+      <script>
+        alert('Sobreturno creado correctamente.');
+      </script>
+    `);
+  } catch (error) {
+    console.error('Error al crear el sobreturno:', error);
+    res.status(500).send('Error al crear el sobreturno');
+  }
+}

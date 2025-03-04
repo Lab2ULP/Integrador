@@ -15,7 +15,7 @@ const Paciente = db.define('Paciente',{
         allowNull:false,
         references:{
             model:Usuario,
-            key:'id'
+            key:'ID'
         }
     },
     obra_social:{
@@ -31,6 +31,6 @@ const Paciente = db.define('Paciente',{
     timestamps:false
 })
 
-Paciente.belongsTo(Usuario,{foreignKey:'usuarioID'})
+
 
 module.exports = Paciente

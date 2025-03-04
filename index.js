@@ -1,10 +1,9 @@
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const sequelize = require('./config/database');
-const session = require('express-session');
+const session = require('express-session'); // Importar express-session
 require('dotenv').config();
-
 
 // Rutas
 const personaRoutes = require('./routes/personaRoutes');
@@ -20,22 +19,35 @@ const turnoRoutes = require('./routes/turnoRoutes');
 
 const app = express();
 
-
-// Configuración de la sesión
+// Configuración de la sesión en memoria
 app.use(session({
-  secret: 'bicampeones_de_america',
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: process.env.NODE_ENV === 'production' }
+  secret: 'bicampeones_de_america',  // Puedes cambiarlo por un valor más seguro
+  resave: false,                     // No guarda la sesión si no ha cambiado
+  saveUninitialized: false,          // No guarda sesiones no inicializadas
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',  // Si estás en producción, usa https
+    httpOnly: true,                   // Evita el acceso a las cookies desde el cliente
+    maxAge: 1000 * 60 * 60 * 24 // 1 día de duración
+  }
 }));
 
+// Configuración de la base de datos
+const sequelize = require('./config/database');
+
+// Sincronizar la base de datos
+sequelize.sync().then(() => {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
+  });
+}).catch(err => {
+  console.error('Error al conectar a la base de datos:', err);
+});
 
 // Configuración del middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public'))); // Servir archivos estáticos
-
-
 
 app.use((err, req, res, next) => {
   console.error('Error capturado:', err.stack);
@@ -61,14 +73,4 @@ app.use('/diasAgenda', diasAgendaRoutes);
 // Ruta de inicio
 app.get('/', (req, res) => {
   res.render('login');
-});
-
-// Sincronizar la base de datos y arrancar el servidor
-sequelize.sync().then(() => {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
-  });
-}).catch(err => {
-  console.error('Error al conectar a la base de datos:', err);
 });

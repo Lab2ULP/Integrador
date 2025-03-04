@@ -2,7 +2,7 @@
 doctype html
 html
   head
-
+    link(rel="stylesheet", href="/styles/crearCliente.css")
     title Crear un usuario
   body
     h1 Registro de usuarios
@@ -18,7 +18,7 @@ html
       br
 
       label(for="nacimiento") Fecha de Nacimiento:
-      input(type="date" name="nacimiento" required)
+      input(type="date" name="nacimiento" required max=(new Date().toISOString().split('T')[0]))
       br
 
       //- Datos de Usuario
