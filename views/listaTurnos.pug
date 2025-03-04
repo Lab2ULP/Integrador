@@ -14,7 +14,7 @@ block content
             th Fecha
             th Hora de Inicio
             th Hora de Fin
-            th Acción
+            th Acción
         tbody
           each turno in turnos
             tr
@@ -27,14 +27,14 @@ block content
                 form(action='/secretario/turnos/actualizarEstado', method='POST', style='display:inline-block')
                   input(type='hidden', name='ID', value=turno.ID)
 
-                  // Selección de Paciente
+                  // Selección de Paciente
                   label(for='pacienteID') Paciente:
                   select(name='pacienteID')
                     option(value='') Seleccionar paciente
                     each paciente in pacientes
                       option(value=paciente.ID, selected=turno.pacienteID == paciente.ID)= paciente.Usuario.Persona.nombre + ' (' + paciente.Usuario.Persona.dni + ')'
 
-                  // Selección de Estado
+                  // Selección de Estado
                   label(for='estado_turno') Estado:
                   select(name='estado_turno')
                     each estado in tipoTurnos
@@ -42,9 +42,12 @@ block content
 
                   button(type='submit') Actualizar Turno
 
-                // Botón para crear sobreturno (solo para estados específicos)
+
+                  // Botón para crear sobreturno (solo para estados específicos)
                 if ['Reservado', 'Confirmado', 'En consulta'].includes(turno.estado_turno)
-                  button(type='button', onclick=`mostrarFormularioSobreturno('${turno.ID}')`) Crear Sobreturno
+                  form(action=`/secretario/turnos/crearSobreturno/${turno.ID}`, method='GET', target='_blank', style='display:inline-block')
+                    button(type='submit') Crear Sobreturno    
+
 
                 // Formulario para crear sobreturno (oculto inicialmente)
                 div(id=`formularioSobreturno-${turno.ID}`, style='display: none; margin-top: 10px;')
@@ -72,4 +75,8 @@ block content
       } else {
         formulario.style.display = 'none';
       }
+
     }
+
+    }
+

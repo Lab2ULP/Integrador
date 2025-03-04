@@ -63,6 +63,7 @@ exports.listarTurnos = async (req, res) => {
 };
 
 exports.actualizarTurnos = async (req, res) => {
+
     try {
       // Extraemos los datos enviados desde el formulario
       const { ID, pacienteID, estado_turno } = req.body;
@@ -98,122 +99,154 @@ exports.actualizarTurnos = async (req, res) => {
     } catch (error) {
       console.error('Error al actualizar el turno:', error);
       res.status(500).json({ message: 'Error al actualizar el turno' });
+
+  try {
+    const { ID, pacienteID, estado_turno } = req.body;
+
+    if (!ID) {
+      return res.status(400).json({ message: 'El ID del turno es requerido' });
+
     }
+
+    const turno = await Turno.findByPk(ID);
+
+    if (!turno) {
+      return res.status(404).json({ message: 'Turno no encontrado' });
+    }
+
+    turno.pacienteID = pacienteID || null;
+    turno.estado_turno = estado_turno;
+
+    await turno.save();
+
+    // Enviar un script que muestre un alert y redirija
+    res.send(`
+      <script>
+        alert('Turno actualizado correctamente.');
+        window.location.href = '/secretario/sucursal';
+      </script>
+    `);
+  } catch (error) {
+    console.error('Error al actualizar el turno:', error);
+    res.status(500).json({ message: 'Error al actualizar el turno' });
+  }
 };
 
 exports.crearAgenda = async (req, res) => {
   const {
-      profesional,
-      especialidadID,
-      limiteSobreturnos,
-      sucursal,
-      duracionTurnos,
-      fechaDesde,
-      fechaHasta,
-      clasificacionExtra,
-      dias
+    profesional,
+    especialidadID,
+    limiteSobreturnos,
+    sucursal,
+    duracionTurnos,
+    fechaDesde,
+    fechaHasta,
+    clasificacionExtra,
+    dias
   } = req.body;
 
   try {
-      // Paso 1: Crear la agenda y la clasificación, en una transacción
-      const nuevaAgenda = await sequelize.transaction(async (t) => {
-          const agendaCreada = await Agenda.create({
-              prof_especialidadID: profesional,
-              sucursalID: sucursal,
-              sobre_turnos_limites: limiteSobreturnos,
-              duracion_turnos: duracionTurnos,
-              fecha_desde: fechaDesde,
-              fecha_hasta: fechaHasta,
-          }, { transaction: t });
+    const nuevaAgenda = await sequelize.transaction(async (t) => {
+      const agendaCreada = await Agenda.create({
+        prof_especialidadID: profesional,
+        sucursalID: sucursal,
+        sobre_turnos_limites: limiteSobreturnos,
+        duracion_turnos: duracionTurnos,
+        fecha_desde: fechaDesde,
+        fecha_hasta: fechaHasta,
+      }, { transaction: t });
 
-          if (clasificacionExtra) {
-              await AgendaClasificacion.create({
-                  agendaID: agendaCreada.ID,
-                  clasificacionID: clasificacionExtra
-              }, { transaction: t });
-          }
-
-          return agendaCreada; // Devolver la agenda creada para su uso posterior
-      });
-
-        for (const dia of dias) {
-            if (dia.horaInicioManiana) {
-                await AgendaDia.create({
-                    agendaID: nuevaAgenda.ID,
-                    diaID: dia.diaID,
-                    hora_inicio: dia.horaInicioManiana,
-                    hora_final: dia.horaFinalManiana,
-                });
-            }
-            if (dia.horaInicioTarde) {
-                await AgendaDia.create({
-                    agendaID: nuevaAgenda.ID,
-                    diaID: dia.diaID,
-                    hora_inicio: dia.horaInicioTarde,
-                    hora_final: dia.horaFinalTarde,
-                });
-            }
-        }
-        // Paso 3: Crear los turnos para cada día seleccionado
-        for (const dia of dias) {
-          const diaID = parseInt(dia.diaID); // Convertir diaID a número para comparar con getDay()
-
-          let fechaTurno = new Date(fechaDesde); // Inicializar desde la fecha de inicio cada vez
-          let fechaLimite = new Date(fechaHasta)
-          // Iterar dentro del rango de fechas
-          while (fechaTurno <= new Date(sumarUnDia(fechaHasta))) {
-              // Verificar si la fecha actual corresponde al día de la semana seleccionado en el checkbox
-              if (fechaTurno.getDay() === diaID) {
-                  console.log('Creando turnos para:', fechaTurno.toISOString().split('T')[0]);
-      
-                  // Crear turnos para la mañana, si está configurada
-                  if (dia.horaInicioManiana) {
-                      const turnosManiana = calcularTurnos(dia.horaInicioManiana, dia.horaFinalManiana, duracionTurnos);
-                      for (const turno of turnosManiana) {
-                          await Turno.create({
-                              agendaID: nuevaAgenda.ID,
-                              fecha: (fechaTurno-1), // Guardar fecha en formato 'YYYY-MM-DD'
-                              hora_inicio: turno.inicio,
-                              hora_final: turno.fin,
-                              motivo: "",
-                              pacienteID: null,
-                              estado_turno: 'Libre'
-                          });
-                      }
-                  }
-      
-                  // Crear turnos para la tarde, si está configurada
-                  if (dia.horaInicioTarde) {
-                      const turnosTarde = calcularTurnos(dia.horaInicioTarde, dia.horaFinalTarde, duracionTurnos);
-                      for (const turno of turnosTarde) {
-                          await Turno.create({
-                              agendaID: nuevaAgenda.ID,
-                              fecha: (fechaTurno-1),
-                              hora_inicio: turno.inicio,
-                              hora_final: turno.fin,
-                              motivo: "",
-                              pacienteID: null,
-                              estado_turno: 'Libre'
-                          });
-                      }
-                  }
-              }
-      
-              // Avanzar al siguiente día sin modificar el día original
-              fechaTurno.setDate(fechaTurno.getDate() + 1);
-          }
+      if (clasificacionExtra) {
+        await AgendaClasificacion.create({
+          agendaID: agendaCreada.ID,
+          clasificacionID: clasificacionExtra
+        }, { transaction: t });
       }
-      
+
+      return agendaCreada;
+    });
+
+    for (const dia of dias) {
+      if (dia.horaInicioManiana) {
+        await AgendaDia.create({
+          agendaID: nuevaAgenda.ID,
+          diaID: dia.diaID,
+          hora_inicio: dia.horaInicioManiana,
+          hora_final: dia.horaFinalManiana,
+        });
+      }
+      if (dia.horaInicioTarde) {
+        await AgendaDia.create({
+          agendaID: nuevaAgenda.ID,
+          diaID: dia.diaID,
+          hora_inicio: dia.horaInicioTarde,
+          hora_final: dia.horaFinalTarde,
+        });
+      }
+    }
+
+    for (const dia of dias) {
+      const diaID = parseInt(dia.diaID);
+      let fechaTurno = new Date(fechaDesde);
+      let fechaLimite = new Date(fechaHasta);
+
+      while (fechaTurno <= new Date(sumarUnDia(fechaHasta))) {
+        if (fechaTurno.getDay() === diaID) {
+          console.log('Creando turnos para:', fechaTurno.toISOString().split('T')[0]);
+
+          if (dia.horaInicioManiana) {
+            const turnosManiana = calcularTurnos(dia.horaInicioManiana, dia.horaFinalManiana, duracionTurnos);
+            for (const turno of turnosManiana) {
+              await Turno.create({
+                agendaID: nuevaAgenda.ID,
+                fecha: (fechaTurno - 1),
+                hora_inicio: turno.inicio,
+                hora_final: turno.fin,
+                motivo: "",
+                pacienteID: null,
+                estado_turno: 'Libre'
+              });
+            }
+          }
+
+          if (dia.horaInicioTarde) {
+            const turnosTarde = calcularTurnos(dia.horaInicioTarde, dia.horaFinalTarde, duracionTurnos);
+            for (const turno of turnosTarde) {
+              await Turno.create({
+                agendaID: nuevaAgenda.ID,
+                fecha: (fechaTurno - 1),
+                hora_inicio: turno.inicio,
+                hora_final: turno.fin,
+                motivo: "",
+                pacienteID: null,
+                estado_turno: 'Libre'
+              });
+            }
+          }
+        }
+
 
       // Redirigir después de que se complete la creación
       res.redirect('/secretario/sucursal');
     
 
+        fechaTurno.setDate(fechaTurno.getDate() + 1);
+      }
+    }
+
+
+    // Enviar un script que muestre un alert y redirija
+    res.send(`
+      <script>
+        alert('Agenda creada correctamente.');
+        window.location.href = '/secretario/sucursal';
+      </script>
+    `);
   } catch (error) {
-      console.error('Error al crear la agenda:', error);
-      res.status(500).json({ message: 'Error al crear la agenda' });
+    console.error('Error al crear la agenda:', error);
+    res.status(500).json({ message: 'Error al crear la agenda' });
   }
-}; 
+};
 
 exports.listarAgendas = async(req,res) => {
   const sucursalId = req.query.sucursal;

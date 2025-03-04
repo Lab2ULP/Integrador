@@ -48,9 +48,13 @@ exports.addDiaNoLaborable = async (req, res) => {
     // Verifica que se haya creado la relación
     console.log("Nuevo día no laborable creado:", nuevoDiaNoLaborable);
 
-    // Envía una respuesta de éxito
-    res.redirect('/profesionales/profesionalesDnl');
-
+    // Envía una respuesta de éxito con un alert y redirige
+    res.send(`
+      <script>
+        alert('Día no laborable agregado correctamente.');
+        window.location.href = '/profesionales/profesionalesDnl'; // Redirige a la misma ruta
+      </script>
+    `);
   } catch (error) {
     console.error("Error al agregar día no laborable:", error);
     res.status(500).json({ error: 'Error al agregar día no laborable' });
@@ -84,13 +88,19 @@ exports.removeDiaNoLaborable = async (req, res) => {
     }
 
     console.log('Registro eliminado exitosamente para el ID:', ID);
-    res.redirect('/profesionales/profesionalesDnl'); // Redirigir a la página actualizada después de la eliminación
+
+    // Envía una respuesta de éxito con un alert y redirige
+    res.send(`
+      <script>
+        alert('Día no laborable eliminado correctamente.');
+        window.location.href = '/profesionales/profesionalesDnl'; // Redirige a la misma ruta
+      </script>
+    `);
   } catch (error) {
     console.error('Error al eliminar el registro:', error);
     res.status(500).json({ error: 'Error al eliminar el registro' });
   }
 };
-
 
 
 

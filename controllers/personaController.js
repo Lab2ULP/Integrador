@@ -55,7 +55,13 @@ exports.editarPersona = async (req, res) => {
       { where: { id } }
     );
 
-    return res.redirect('/api/personas'); // Redirige a la lista después de actualizar
+    // Envía una respuesta de éxito con un alert y redirige
+    res.send(`
+      <script>
+        alert('Persona actualizada correctamente.');
+        window.location.href = '/api/personas'; // Redirige a la lista de personas
+      </script>
+    `);
   } catch (error) {
     console.error(error);
     return res.status(500).send('Error al actualizar la persona');
@@ -83,7 +89,14 @@ exports.createPersona = async (req, res) => {
   try {
     const { nombre, dni, nacimiento } = req.body;
     const nuevaPersona = await Persona.create({ nombre, dni, nacimiento });
-    res.redirect('/api/personas'); // Redirige a la lista de personas
+
+    // Envía una respuesta de éxito con un alert y redirige
+    res.send(`
+      <script>
+        alert('Persona creada correctamente.');
+        window.location.href = '/api/personas'; // Redirige a la lista de personas
+      </script>
+    `);
   } catch (error) {
     console.error(error);
     res.status(500).send('Error al crear la persona');
@@ -97,20 +110,33 @@ exports.updatePersona = async (req, res) => {
     await Persona.update({ nombre, dni, nacimiento }, {
       where: { ID: req.params.id },
     });
-    res.redirect('/api/personas'); // Redirige a la lista de personas
+
+    // Envía una respuesta de éxito con un alert y redirige
+    res.send(`
+      <script>
+        alert('Persona actualizada correctamente.');
+        window.location.href = '/api/personas'; // Redirige a la lista de personas
+      </script>
+    `);
   } catch (error) {
     console.error(error);
     res.status(500).send('Error al actualizar la persona');
   }
 };
-
 // Eliminar una persona
 exports.deletePersona = async (req, res) => {
   try {
     await Persona.destroy({
       where: { ID: req.params.id },
     });
-    res.redirect('/api/personas/'); // Redirige a la lista de personas
+
+    // Envía una respuesta de éxito con un alert y redirige
+    res.send(`
+      <script>
+        alert('Persona eliminada correctamente.');
+        window.location.href = '/api/personas'; // Redirige a la lista de personas
+      </script>
+    `);
   } catch (error) {
     console.error(error);
     res.status(500).send('Error al eliminar la persona');
