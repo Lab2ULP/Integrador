@@ -77,10 +77,11 @@ exports.getProfesionalesByEspecialidad = async (req, res) => {
 exports.getTurnosByProfesionalAndEspecialidad = async (req, res) => {
   const { profesionalID, especialidadID } = req.params;
   const sucursalId = req.session.sucursal;
-  const fechaActual = new Date().toISOString().split('T')[0];
+  const fechaActual = new Date(); // Fecha actual en tu zona horaria
+  const fechaFormateada = fechaActual.toISOString().split('T')[0]; // Formato: YYYY-MM-DD
   console.log(`Sucursal ID ${sucursalId}`)
   console.log(`profesionalID ${profesionalID}, especialidadID ${especialidadID}`)
-  console.log(`Fecha actual ${fechaActual}`)
+  console.log(`Fecha actual ${fechaFormateada}`)
 
   try {
       // 1. Buscar el ID de la tabla `especialidades_profesionales` que coincide con el profesional y la especialidad
@@ -100,8 +101,8 @@ exports.getTurnosByProfesionalAndEspecialidad = async (req, res) => {
           where: {
               prof_especialidadID: especialidadProfesional.ID,
               sucursalID: parseInt(sucursalId),
-              //fecha_desde: {[Op.lte]:fechaActual},
-              //fecha_hasta: {[Op.gte]:fechaActual},
+              fecha_desde: {[Op.lte]:fechaFormateada},
+              fecha_hasta: {[Op.gte]:fechaFormateada},
           },
       });
 
