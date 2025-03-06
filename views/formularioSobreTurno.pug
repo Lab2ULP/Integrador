@@ -1,0 +1,25 @@
+extends layoutSecretario
+
+block content
+  .content-header
+    h1 Crear Sobreturno
+
+  .form-container
+    form(action='/secretario/turnos/crearSobreturno', method='POST')
+      input(type='hidden', name='agendaID', value=turno.agendaID)
+      input(type='hidden', name='fecha', value=turno.fecha)
+      input(type='hidden', name='hora_inicio', value=turno.hora_inicio)
+      input(type='hidden', name='hora_final', value=turno.hora_final)
+
+      p Fecha: #{new Date(turno.fecha).toLocaleDateString()}
+      p Hora de inicio: #{turno.hora_inicio}
+      p Hora de finalización: #{turno.hora_final}
+      p Sobreturnos disponibles: #{sobreturnosDisponibles}
+
+      label(for='pacienteID') Seleccionar paciente:
+      select(name='pacienteID')
+        option(value='') Seleccionar paciente
+        each paciente in pacientes
+          option(value=paciente.ID)= paciente.Usuario.Persona.nombre + ' (' + paciente.Usuario.Persona.dni + ')'
+
+      button(type='submit') Crear Sobreturno

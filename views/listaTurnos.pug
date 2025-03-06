@@ -44,11 +44,11 @@ block content
 
                 // Botón para crear sobreturno (solo para estados específicos)
                 if ['Reservado', 'Confirmado', 'En consulta'].includes(turno.estado_turno)
-                  button(type='button', onclick=`mostrarFormularioSobreturno('${turno.ID}')`) Crear Sobreturno
+                  button(type='button', id=`btnSobreturno-${turno.ID}`, onclick=`mostrarFormularioSobreturno('${turno.ID}')`) Crear Sobreturno
 
                 // Formulario para crear sobreturno (oculto inicialmente)
                 div(id=`formularioSobreturno-${turno.ID}`, style='display: none; margin-top: 10px;')
-                  form(action='/secretario/turnos/crearSobreturno', method='POST')
+                  form(action='/secretario/turnos/crearSobreturno', method='POST', onsubmit=`ocultarBotonSobreturno('${turno.ID}')`)
                     input(type='hidden', name='agendaID', value=turno.agendaID)
                     input(type='hidden', name='fecha', value=turno.fecha)
                     input(type='hidden', name='hora_inicio', value=turno.hora_inicio)
@@ -71,5 +71,12 @@ block content
         formulario.style.display = 'block';
       } else {
         formulario.style.display = 'none';
+      }
+    }
+
+    function ocultarBotonSobreturno(turnoID) {
+      const botonSobreturno = document.getElementById(`btnSobreturno-${turnoID}`);
+      if (botonSobreturno) {
+        botonSobreturno.style.display = 'none';
       }
     }

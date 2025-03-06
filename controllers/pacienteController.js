@@ -24,8 +24,12 @@ exports.crearPaciente = async(req,res)=>{
         dato_contacto:dato_contacto
     });
 
-    res.redirect('/')
-
+    res.send(`
+        <script>
+          alert('Paciente creado correctamente.');
+          window.location.href = '/'; // Redirige a la ruta principal
+        </script>
+      `);
     }catch(error){
         console.error(error);
         res.status(500).send('Error al crear el paciente');

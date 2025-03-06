@@ -73,7 +73,13 @@ exports.editarProfesional = async (req, res) => {
     // Actualizar datos de Persona
     await profesional.Persona.update({ nombre, dni, nacimiento });
 
-    return res.redirect('/profesionales/lista');
+    // Envía una respuesta de éxito con un alert y redirige
+    res.send(`
+      <script>
+        alert('Profesional actualizado correctamente.');
+        window.location.href = '/profesionales/lista'; // Redirige a la lista de profesionales
+      </script>
+    `);
   } catch (error) {
     console.error('Error al actualizar el profesional:', error);
     return res.status(500).send('Error al actualizar el profesional');
@@ -90,7 +96,12 @@ exports.actualizarEstado = async (req,res) => {
       { where: { ID: profesionalID } }
     );
 
-    res.redirect('/profesionales/lista'); // Redirige a donde sea necesario
+    res.send(`
+      <script>
+        alert('Estado actualizado correctamente.');
+        window.location.href = '/profesionales/lista'; // Redirige a la lista de profesionales
+      </script>
+    `);
   } catch (error) {
     console.error('Error al actualizar el estado:', error);
     res.status(500).send('Error al actualizar el estado');
@@ -108,29 +119,35 @@ exports.renderCrear = async(req,res)=>{
   }
 }
 
-exports.crearProfesional = async (req,res) => {
-  const { nombre, dni, nacimiento, especialidad, matricula }   = req.body;
+exports.crearProfesional = async (req, res) => {
+  const { nombre, dni, nacimiento, especialidad, matricula } = req.body;
 
   try {
     const nuevaPersona = await Persona.create({
-      nombre,dni,nacimiento
+      nombre, dni, nacimiento
     });
-    const nuevoProfesional= await Profesional.create({
-      personaID:nuevaPersona.ID
+    const nuevoProfesional = await Profesional.create({
+      personaID: nuevaPersona.ID
     });
 
     await ProfesionalEspecialidad.create({
       profesionalID: nuevoProfesional.ID,
-      especialidadID: especialidad,matricula
-    })
+      especialidadID: especialidad,
+      matricula
+    });
 
-    res.redirect('/profesionales/lista')
+    // Envía una respuesta de éxito con un alert y redirige
+    res.send(`
+      <script>
+        alert('Profesional creado correctamente.');
+        window.location.href = '/profesionales/lista'; // Redirige a la lista de profesionales
+      </script>
+    `);
   } catch (error) {
-    console.error('Error al crear el profesional',error)
+    console.error('Error al crear el profesional', error);
     res.status(500).send('Error al crear el profesional');
-
-    };
-}
+  }
+};
 
 exports.getAllProfesionalDiasNoLaborables = async (req, res) => {
     try {
@@ -171,8 +188,14 @@ exports.sumarEspecialidad = async (req, res) => {
       profesionalID: profesionalID, // Esto es correcto
       matricula: matricula // Esto es correcto
     });
-    //window.alert('')
-    res.redirect(`/profesionales/lista`);
+
+    // Envía una respuesta de éxito con un alert y redirige
+    res.send(`
+      <script>
+        alert('Especialidad añadida correctamente.');
+        window.location.href = '/profesionales/lista'; // Redirige a la lista de profesionales
+      </script>
+    `);
   } catch (error) {
     console.error('Error al añadir especialidad', error);
     res.status(500).send('Error al añadir especialidad'); // Respuesta de error adecuada
@@ -191,7 +214,13 @@ exports.borrarEspecialidad = async (req, res) => {
       }
     });
 
-    res.redirect(`/profesionales/lista`);
+    // Envía una respuesta de éxito con un alert y redirige
+    res.send(`
+      <script>
+        alert('Especialidad eliminada correctamente.');
+        window.location.href = '/profesionales/lista'; // Redirige a la lista de profesionales
+      </script>
+    `);
   } catch (error) {
     console.error('Error al eliminar la especialidad del profesional:', error);
     res.status(500).send('Error al eliminar la especialidad del profesional');

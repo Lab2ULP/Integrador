@@ -63,42 +63,42 @@ exports.listarTurnos = async (req, res) => {
 };
 
 exports.actualizarTurnos = async (req, res) => {
-    try {
-      // Extraemos los datos enviados desde el formulario
-      const { ID, pacienteID, estado_turno } = req.body;
-  
-      // Verificamos que el ID del turno esté presente
-      if (!ID) {
-        return res.status(400).json({ message: 'El ID del turno es requerido' });
-      }
-  
-      // Buscamos el turno en la base de datos
-      const turno = await Turno.findByPk(ID);
-  
-      // Verificamos que el turno existe
-      if (!turno) {
-        return res.status(404).json({ message: 'Turno no encontrado' });
-      }
-  
-      // Actualizamos los campos del turno según los datos enviados
-      turno.pacienteID = pacienteID || null; // Si no se seleccionó paciente, asignamos null
-      turno.estado_turno = estado_turno;
-  
-      // Guardamos los cambios en la base de datos
-      await turno.save();
+  try {
+    // Extraemos los datos enviados desde el formulario
+    const { ID, pacienteID, estado_turno } = req.body;
 
-
-      res.send(`
-        <script>
-          window.alert('Turno actualizado correctamente!!!');
-          window.location.href = '/secretario/sucursal';
-        </script>
-      `);
-      //res.redirect('/secretario/sucursal')
-    } catch (error) {
-      console.error('Error al actualizar el turno:', error);
-      res.status(500).json({ message: 'Error al actualizar el turno' });
+    // Verificamos que el ID del turno esté presente
+    if (!ID) {
+      return res.status(400).json({ message: 'El ID del turno es requerido' });
     }
+
+    // Buscamos el turno en la base de datos
+    const turno = await Turno.findByPk(ID);
+
+    // Verificamos que el turno existe
+    if (!turno) {
+      return res.status(404).json({ message: 'Turno no encontrado' });
+    }
+
+    // Actualizamos los campos del turno según los datos enviados
+    turno.pacienteID = pacienteID || null; // Si no se seleccionó paciente, asignamos null
+    turno.estado_turno = estado_turno;
+
+    // Guardamos los cambios en la base de datos
+    await turno.save();
+
+
+    res.send(`
+      <script>
+        window.alert('Turno actualizado correctamente!!!');
+        window.location.href = '/secretario/sucursal';
+      </script>
+    `);
+    //res.redirect('/secretario/sucursal')
+  } catch (error) {
+    console.error('Error al actualizar el turno:', error);
+    res.status(500).json({ message: 'Error al actualizar el turno' });
+  }
 };
 
 exports.crearAgenda = async (req, res) => {
@@ -206,7 +206,14 @@ exports.crearAgenda = async (req, res) => {
       
 
       // Redirigir después de que se complete la creación
-      res.redirect('/secretario/sucursal');
+      //res.redirect('/secretario/sucursal');
+
+      res.send(`
+        <script>
+          alert('Agenda creada con exito.');
+          window.location.href = '/secretario/sucursal';
+        </script>
+      `);
     
 
   } catch (error) {
@@ -366,6 +373,7 @@ exports.crearSobreturno = async (req, res) => {
     res.send(`
       <script>
         alert('Sobreturno creado correctamente.');
+        window.location.href = '/secretario/sucursal';
       </script>
     `);
   } catch (error) {
