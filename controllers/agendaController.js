@@ -206,7 +206,14 @@ exports.crearAgenda = async (req, res) => {
       
 
       // Redirigir después de que se complete la creación
-      res.redirect('/secretario/sucursal');
+      //res.redirect('/secretario/sucursal');
+
+      res.send(`
+        <script>
+          alert('Agenda creada con exito.');
+          window.location.href = '/secretario/sucursal';
+        </script>
+      `);
     
 
   } catch (error) {
@@ -366,6 +373,7 @@ exports.crearSobreturno = async (req, res) => {
     res.send(`
       <script>
         alert('Sobreturno creado correctamente.');
+        window.location.href = '/secretario/sucursal';
       </script>
     `);
   } catch (error) {

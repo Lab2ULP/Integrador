@@ -151,7 +151,7 @@ exports.reservarTurno = async (req, res) => {
 
     // Redirigir después de actualizar correctamente
 
-    res.redirect('/pacientes/sucursal');
+    //res.redirect('/pacientes/sucursal');
 
     res.send(`
       <script>
