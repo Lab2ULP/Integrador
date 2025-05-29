@@ -9,17 +9,13 @@ block content
       table
         thead
           tr
-            th ID
-            th Agenda ID
             th Fecha
-            th Hora de Inicio
-            th Hora de Fin
+            th Desde
+            th Hasta
             th Acción
         tbody
           each turno in turnos
             tr
-              td= turno.ID
-              td= turno.agendaID
               td= new Date(turno.fecha).toLocaleDateString()
               td= turno.hora_inicio
               td= turno.hora_final
@@ -29,18 +25,18 @@ block content
 
                   // Selección de Paciente
                   label(for='pacienteID') Paciente:
-                  select(name='pacienteID')
+                  select(name='pacienteID' style='margin: 2rem')
                     option(value='') Seleccionar paciente
                     each paciente in pacientes
                       option(value=paciente.ID, selected=turno.pacienteID == paciente.ID)= paciente.Usuario.Persona.nombre + ' (' + paciente.Usuario.Persona.dni + ')'
 
                   // Selección de Estado
                   label(for='estado_turno') Estado:
-                  select(name='estado_turno')
+                  select(name='estado_turno' style='margin: 2rem')
                     each estado in tipoTurnos
                       option(value=estado.nombre, selected=turno.estado_turno == estado.nombre)= estado.nombre
 
-                  button(type='submit') Actualizar Turno
+                  button(type='submit' style='margin: 2rem') Actualizar Turno
 
                 // Botón para crear sobreturno (solo para estados específicos)
                 if ['Reservado', 'Confirmado', 'En consulta'].includes(turno.estado_turno)
