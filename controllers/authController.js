@@ -48,30 +48,49 @@ exports.iniciarSesion = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-      const usuario = await Usuario.findOne({ where: { email } });
+    // Buscar el usuario por email
+    const usuario = await Usuario.findOne({ where: { email } });
 
-      if (!usuario) {
-          return res.status(404).send('Usuario no encontrado');
-      }
+    if (!usuario) {
+      return res.send(`
+        <script>
+          alert('Usuario no encontrado.');
+          window.location.href = '/';
+        </script>
+      `);
+    }
 
-      const passwordValido = await bcrypt.compare(password, usuario.password);
+    // Verificar la contraseña
+    const passwordValido = await bcrypt.compare(password, usuario.password);
 
-      if (!passwordValido) {
-          return res.status(401).send('Contraseña incorrecta');
-      }
+    if (!passwordValido) {
+      return res.send(`
+        <script>
+          alert('Contraseña incorrecta.');
+          window.location.href = '/';
+        </script>
+      `);
+    }
 
-      req.session.userId = usuario.ID;
-      req.session.rol = usuario.rolID;
+    // Establecer la sesión
+    req.session.userId = usuario.ID;
+    req.session.rol = usuario.rolID;
 
-      if (usuario.rolID == 1) {
-          res.redirect('/profesionales/lista');
-      } else if (usuario.rolID == 2) {
-          res.redirect('/secretario/sucursal');
-      } else {
-          res.redirect('/pacientes/sucursal');
-      }
+    // Redirigir según el rol del usuario
+    if (usuario.rolID == 1) {
+      return res.redirect('/profesionales/lista');
+    } else if (usuario.rolID == 2) {
+      return res.redirect('/secretario/sucursal');
+    } else {
+      return res.redirect('/pacientes/sucursal');
+    }
   } catch (error) {
-      console.error(error);
-      res.status(500).send('Error al iniciar sesión');
+    console.error('Error al iniciar sesión:', error);
+    return res.send(`
+      <script>
+        alert('Error al iniciar sesión.');
+        window.location.href = '/';
+      </script>
+    `);
   }
 };
