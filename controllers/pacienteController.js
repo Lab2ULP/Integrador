@@ -71,20 +71,34 @@ exports.principalRender = async (req, res) => {
 
 exports.getProfesionalesByEspecialidad = async (req, res) => {
   const { especialidadID } = req.params;
+  const sucursalID = req.session.sucursal; // Usar la sucursal seleccionada
+  const fechaActual = new Date();
 
   try {
+    // Buscar solo los profesionales con agenda vigente en la sucursal y especialidad
     const profesionales = await ProfesionalEspecialidad.findAll({
       where: { especialidadID },
-      include: {
-        model: Profesional,
-        include: { model: Persona, attributes: ["nombre"] }, // Obtener el nombre
-      },
+      include: [
+        {
+          model: Profesional,
+          include: { model: Persona, attributes: ["nombre"] },
+        },
+        {
+          model: Agenda,
+          required: true, // Solo si tiene agenda
+          where: {
+            sucursalID: sucursalID,
+            fecha_desde: { [Op.lte]: fechaActual },
+            fecha_hasta: { [Op.gte]: fechaActual },
+          },
+        },
+      ],
     });
 
     const resultado = profesionales.map((pe) => ({
-      id: pe.Profesional.ID, // ID del profesional
-      nombre: pe.Profesional.Persona.nombre, // Nombre del profesional
-      especialidadProfesionalID: pe.ID, // ID de la tabla especialidades_profesionales
+      id: pe.Profesional.ID,
+      nombre: pe.Profesional.Persona.nombre,
+      especialidadProfesionalID: pe.ID,
     }));
 
     res.json(resultado);
