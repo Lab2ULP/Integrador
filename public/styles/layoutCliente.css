@@ -482,3 +482,69 @@ button:disabled {
     max-width: 98vw;
   }
 }
+/* ==== Solo tabla de historial de turnos ==== */
+.table {
+  width: 100%;
+  max-width: 90%;
+  margin: 32px auto 24px auto;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  background: transparent;
+}
+
+.table thead tr {
+  background: #007acc;
+}
+
+.table th {
+  color: #fff;
+  font-weight: 700;
+  padding: 14px 10px;
+  border: none;
+  font-size: 1.08em;
+  letter-spacing: 0.5px;
+}
+
+.table th:first-child {
+  border-top-left-radius: 12px;
+}
+.table th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.table tbody tr {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: 10px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.table tbody tr:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 4px 16px rgba(0, 122, 204, 0.1);
+}
+
+.table td {
+  padding: 13px 10px;
+  text-align: center;
+  font-size: 1em;
+  border: none;
+  color: #333;
+}
+
+.table-striped tbody tr:nth-child(even) {
+  background: #f4f6fb;
+}
+
+.table-striped tbody tr:nth-child(odd) {
+  background: #fff;
+}
+
+@media (max-width: 700px) {
+  .table,
+  .table th,
+  .table td {
+    font-size: 0.95em;
+    padding: 8px 4px;
+  }
+}
