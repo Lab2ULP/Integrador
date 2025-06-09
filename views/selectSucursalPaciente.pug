@@ -1,4 +1,4 @@
-extends layoutSecretario
+extends layoutCliente
 
 block content
   h1 Seleccione una sucursal para consultar disponibilidad de turnos
@@ -7,4 +7,5 @@ block content
     select(name="sucursal", ID="sucursal")
       each sucursal in sucursales
         option(value=sucursal.ID)= sucursal.nombre
-    button(type="submit") Seleccionar
+
+    button(type="submit" style="display: block; margin: 20px auto 0 auto;") Seleccionar

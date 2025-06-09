@@ -11,19 +11,28 @@ html
         .logo-container
           img(src="/logo.jpg" alt="Logo")
           h1 Nombre de la Empresa
-      
+
       //- Contenedor para dividir en menú y bloque dinámico
       .content
         //- Menú a la izquierda
         aside.menu
-          
+          nav
+            ul
+              li
+                a(href='/cliente/inicio') Inicio
+              li
+                a(href='/pacientes/turnos') Turnos
+              //- Agregá más enlaces si es necesario
+
+          //- Botón de cerrar sesión al fondo
+          .logout-wrapper
+            form(action='/auth/logout', method='POST', class='logout-form')
+              button(type='submit') Cerrar sesión
 
         //- Bloque dinámico a la derecha
         main
           block content
-        form(action='/auth/logout', method='POST')
-          button(type='submit') Cerrar sesión
 
-    //- Pie de página opcional
-    footer
-      p © 2024 - Nombre de la Empresa
+      //- Pie de página opcional
+      footer
+        p © 2024 - Nombre de la Empresa

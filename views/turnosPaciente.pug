@@ -1,0 +1,26 @@
+extends layoutCliente
+
+block content
+  .container
+    h1 Turnos del Paciente
+    if turnos.length > 0
+      table.table.table-striped
+        thead
+          tr
+            th Fecha
+            th Hora Inicio
+            th Hora Fin
+            th Médico
+            th Estado
+            th Motivo
+        tbody
+          each turno in turnos
+            tr
+              td= turno.fecha
+              td= turno.hora_inicio
+              td= turno.hora_final
+              td= turno.Agenda.EspecialidadesProfesionale.Profesional.Persona.nombre
+              td= turno.estado_turno
+              td= turno.motivo
+    else
+      p No tienes turnos programados.
