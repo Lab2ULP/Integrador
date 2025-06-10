@@ -325,3 +325,33 @@ exports.listarTurnos = async (req, res) => {
     res.status(500).send("Error al obtener los turnos");
   }
 };
+
+exports.getInfoPaciente = async (req, res) => {
+  try {
+    // Buscar el paciente cuyo usuarioID coincide con el usuario logueado
+    const paciente = await Paciente.findOne({
+      where: { usuarioID: req.session.userId },
+      include: [
+        {
+          model: Usuario,
+          attributes: ["email"],
+          include: {
+            model: Persona,
+            attributes: ["nombre", "dni", "nacimiento"],
+          },
+        },
+      ],
+    });
+
+    if (!paciente) {
+      return res.status(404).send("Paciente no encontrado");
+    }
+
+    // Enviar la información del paciente
+    //res.json(paciente);
+    res.render("infoPaciente", { paciente });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener la información del paciente");
+  }
+};

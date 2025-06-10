@@ -1,0 +1,92 @@
+extends layoutCliente
+
+block content
+  .info-paciente-card
+    h1 Información del Paciente
+    if paciente
+      ul.info-list
+        li
+          span.label Nombre:
+          span.valor #{paciente.Usuario.Persona.nombre}
+        li
+          span.label DNI:
+          span.valor #{paciente.Usuario.Persona.dni}
+        li
+          span.label Fecha de nacimiento:
+          span.valor #{paciente.Usuario.Persona.nacimiento}
+        li
+          span.label Email:
+          span.valor #{paciente.Usuario.email}
+        li
+          span.label Obra social:
+          span.valor #{paciente.obra_social}
+        li
+          span.label Dato de contacto:
+          span.valor #{paciente.dato_contacto}
+    else
+      p No se encontró información del paciente.
+
+  style.
+    .info-paciente-card {
+      max-width: 650px;
+      margin: 40px auto 0 auto;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .info-paciente-card h1 {
+      color: #007acc;
+      text-align: center;
+      margin-bottom: 28px;
+      font-size: 2em;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .info-list {
+      width: 100%;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .info-list li {
+      background: #f4f6fb;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+      padding: 14px 18px;
+      font-size: 1.08em;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      border-left: 5px solid #007acc;
+    }
+    .info-list .label {
+      color: #007acc;
+      font-weight: 600;
+      min-width: 160px;
+      display: inline-block;
+    }
+    .info-list .valor {
+      color: #222;
+      font-weight: 400;
+      word-break: break-all;
+    }
+    @media (max-width: 700px) {
+      .info-paciente-card {
+        padding: 16px 4px;
+        max-width: 99vw;
+      }
+      .info-list li {
+        padding: 10px 6px;
+        font-size: 1em;
+      }
+      .info-list .label {
+        min-width: 100px;
+      }
+    }

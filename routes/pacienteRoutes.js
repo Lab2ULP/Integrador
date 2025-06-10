@@ -26,4 +26,5 @@ router.get(
   pacienteController.listarAgendas
 );
 router.get("/turnos", verificarRol([3]), pacienteController.listarTurnos);
+router.get("/info", verificarRol([3]), pacienteController.getInfoPaciente);
 module.exports = router;
