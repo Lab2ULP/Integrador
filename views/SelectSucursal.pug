@@ -2,9 +2,32 @@ extends layoutSecretario
 
 block content
   h1 Seleccione una sucursal
-  form(action="/secretario/lista/agendas", method="GET")
+  form(action="/secretario/lista/agendas", method="GET" id="formSucursal")
     label(for="sucursal") Sucursal:
-    select(name="sucursal", ID="sucursal")
+    input(list="sucursales" name="sucursal" id="sucursal" placeholder="Buscar sucursal...")
+
+    datalist(id="sucursales")
       each sucursal in sucursales
-        option(value=sucursal.ID)= sucursal.nombre
-    button(type="submit") Seleccionar
+        option(value=sucursal.nombre data-id=sucursal.ID)
+
+    button(type="submit" id="btnSeleccionar") Seleccionar
+
+  script.
+    const input = document.getElementById('sucursal');
+    const datalist = document.getElementById('sucursales');
+    const form = document.getElementById('formSucursal');
+    const btn = document.getElementById('btnSeleccionar');
+
+    // Desactivar el botón si hay algún número en el input
+    input.addEventListener('input', function() {
+      const tieneNumero = /\d/.test(input.value);
+      btn.disabled = tieneNumero || input.value.trim() === "";
+    });
+
+    form.addEventListener('submit', function(e) {
+      const val = input.value;
+      const option = Array.from(datalist.options).find(opt => opt.value === val);
+      if(option && option.dataset.id){
+        input.value = option.dataset.id;
+      }
+    });

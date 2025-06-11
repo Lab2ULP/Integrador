@@ -1,76 +1,81 @@
 extends layoutSecretario 
 
 block content
-    h1 Crear Agendas
+  h1 Crear Agendas
 
-    form(action="/secretario/crear",method="POST") 
-     label(for="profesional") Elija un profesional
-     select(name="profesional",id="profesionalSelect",onchange="updateEspecialidadID()")
-      option(value="") Seleccione un profesional con especialidad 
-      each profesional in profesionales
-       option(value=profesional.ID,data-especialidad-id=profesional.Especialidad.ID)= profesional.Profesional.Persona.nombre + ' - ' + profesional.Especialidad.nombre
-     input(type="hidden" name="especialidadID" id="especialidadIDHidden")
-     br
-     label(for="limiteSobreturnos") Cantidad de sobreturnos por dia
-     input(type="number",name="limiteSobreturnos", max=5,min=0)
-     br
-     label(for="sucursal") Elija una sucursal
-     select(name="sucursal")
-      option(value="") Selecciona una sucursal 
-      each sucursal in sucursales
-       option(value=sucursal.ID)= sucursal.nombre + ' - ' + sucursal.ciudad
-     br
-     label(for="duracionTurnos") Elija la duracion de los turnos en MINUTOS 
-     select(name="duracionTurnos")
-      option(value=10) 10
-      option(value=15) 15 
-      option(value=30) 30 
-      option(value=45) 45 
-      option(value=60) 60 
-     br
-     label(for="fechaDesde") Indique cuando comienza la agenda 
-     input(type="date", name="fechaDesde")  
-     br
-     label(for="fechaHasta") Indique cuando termina la agenda 
-     input(type="date", name="fechaHasta")
-     br
-     label(for="clasificacionExtra") Seleccione una clasificacion 
-     select(name="clasificacionExtra")
-      option(value="") 
-      each clasificacion in clasificacionesExtra
-       option(value=clasificacion.ID)= clasificacion.nombre  
-     br
-     each dia, index in dias
-      label(for="dias")= dia.nombre
-      input(type="checkbox" name=`dias[${index}][diaID]` value=dia.ID)
-  
-      label(for="horaInicioManiana") Inicio agenda mañana
-      input(type="time" name=`dias[${index}][horaInicioManiana]` min="06:00" max="12:00")
+  form.crear-agenda-form(action="/secretario/crear", method="POST")
+    fieldset
+      legend Profesional y Sucursal
+      .form-row
+        .form-group
+          label(for="profesional") Profesional
+          select(name="profesional", id="profesionalSelect", onchange="updateEspecialidadID()")
+            option(value="") Seleccione un profesional con especialidad 
+            each profesional in profesionales
+              option(value=profesional.ID, data-especialidad-id=profesional.Especialidad.ID)= profesional.Profesional.Persona.nombre + ' - ' + profesional.Especialidad.nombre
+          input(type="hidden" name="especialidadID" id="especialidadIDHidden")
+        .form-group
+          label(for="sucursal") Sucursal
+          select(name="sucursal")
+            option(value="") Selecciona una sucursal 
+            each sucursal in sucursales
+              option(value=sucursal.ID)= sucursal.nombre + ' - ' + sucursal.ciudad
 
-      label(for="horaFinalManiana") Fin agenda mañana
-      input(type="time" name=`dias[${index}][horaFinalManiana]` min="06:00" max="12:00")
+    fieldset
+      legend Configuración de Agenda
+      .form-row
+        .form-group
+          label(for="limiteSobreturnos") Sobreturnos por día
+          input(type="number", name="limiteSobreturnos", max=5, min=0)
+        .form-group
+          label(for="duracionTurnos") Duración de los turnos (minutos)
+          select(name="duracionTurnos")
+            option(value=10) 10
+            option(value=15) 15 
+            option(value=30) 30 
+            option(value=45) 45 
+            option(value=60) 60 
+      .form-row
+        .form-group
+          label(for="fechaDesde") Fecha de inicio
+          input(type="date", name="fechaDesde")  
+        .form-group
+          label(for="fechaHasta") Fecha de fin
+          input(type="date", name="fechaHasta")
+      .form-row
+        .form-group
+          label(for="clasificacionExtra") Clasificación extra
+          select(name="clasificacionExtra")
+            option(value="") 
+            each clasificacion in clasificacionesExtra
+              option(value=clasificacion.ID)= clasificacion.nombre  
 
-      label(for="horaInicioTarde") Inicio agenda tarde
-      input(type="time" name=`dias[${index}][horaInicioTarde]` min="12:00" max="20:00")
+    fieldset
+      legend Días y Horarios
+      .dias-container
+        each dia, index in dias
+          .dia-bloque
+            label(for=`dias${index}`) 
+              input(type="checkbox" name=`dias[${index}][diaID]` value=dia.ID id=`dias${index}`)
+              | #{dia.nombre}
+            .horarios
+              .horario-bloque
+                label(for=`horaInicioManiana${index}`) Inicio mañana
+                input(type="time" name=`dias[${index}][horaInicioManiana]` min="06:00" max="12:00" id=`horaInicioManiana${index}`)
+                label(for=`horaFinalManiana${index}`) Fin mañana
+                input(type="time" name=`dias[${index}][horaFinalManiana]` min="06:00" max="12:00" id=`horaFinalManiana${index}`)
+              .horario-bloque
+                label(for=`horaInicioTarde${index}`) Inicio tarde
+                input(type="time" name=`dias[${index}][horaInicioTarde]` min="12:00" max="20:00" id=`horaInicioTarde${index}`)
+                label(for=`horaFinalTarde${index}`) Fin tarde
+                input(type="time" name=`dias[${index}][horaFinalTarde]` min="12:00" max="20:00" id=`horaFinalTarde${index}`)
 
-      label(for="horaFinalTarde") Fin agenda tarde
-      input(type="time" name=`dias[${index}][horaFinalTarde]` min="12:00" max="20:00")
-      br
-     button(type="submit") Enviar
-    
-    
-    
-    
-    
-    
-    
-    script.
-        function updateEspecialidadID() {
-            const select = document.getElementById("profesionalSelect");
-            const selectedOption = select.options[select.selectedIndex];
-            const especialidadID = selectedOption.getAttribute("data-especialidad-id");
+    button(type="submit") Enviar
 
-        // Actualiza el valor del input hidden
-            document.getElementById("especialidadIDHidden").value = especialidadID;
-            }
-
+  script.
+    function updateEspecialidadID() {
+      const select = document.getElementById("profesionalSelect");
+      const selectedOption = select.options[select.selectedIndex];
+      const especialidadID = selectedOption.getAttribute("data-especialidad-id");
+      document.getElementById("especialidadIDHidden").value = especialidadID;
+    }
