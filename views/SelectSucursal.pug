@@ -8,7 +8,7 @@ block content
 
     datalist(id="sucursales")
       each sucursal in sucursales
-        option(value=sucursal.nombre data-id=sucursal.ID)
+        option(value=((sucursal.nombre)+(sucursal.ciudad)) data-id=sucursal.ID)
 
     button(type="submit" id="btnSeleccionar") Seleccionar
 
