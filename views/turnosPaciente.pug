@@ -3,8 +3,11 @@ extends layoutCliente
 block content
   .container
     h1 Historial de Turnos
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.7.0/jspdf.plugin.autotable.min.js")
     p Aquí puedes ver el historial de tus turnos.
     if turnos.length > 0
+      button(type="button" id="btnDescargarPDF") Descargar historial PDF
       table.table.table-striped
         thead
           tr
@@ -14,6 +17,7 @@ block content
             th Médico
             th Estado
             th Motivo
+            th Descargar
         tbody
           each turno in turnos
             tr
@@ -23,5 +27,44 @@ block content
               td= turno.Agenda.EspecialidadesProfesionale.Profesional.Persona.nombre
               td= turno.estado_turno
               td= turno.motivo
+              td 
+                button(type="button" class="btnDescargarTurno" data-fecha=turno.fecha data-hora-inicio=turno.hora_inicio data-hora-final=turno.hora_final data-medico=turno.Agenda.EspecialidadesProfesionale.Profesional.Persona.nombre data-estado=turno.estado_turno data-motivo=turno.motivo) PDF
     else
       p No tienes turnos programados.
+  script.
+    document.getElementById('btnDescargarPDF').addEventListener('click', function() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text('Historial de Turnos', 14, 16);
+      doc.autoTable({
+        head: [['Fecha', 'Hora Inicio', 'Hora Fin', 'Médico', 'Estado', 'Motivo']],
+        body: Array.from(document.querySelectorAll('tbody tr')).map(tr =>
+          Array.from(tr.children).slice(0, 6).map(td => td.innerText)
+        ),
+        startY: 22,
+        styles: { fontSize: 10 }
+      });
+      doc.save('historial_turnos.pdf');
+    });
+
+    document.querySelectorAll('.btnDescargarTurno').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.text('Detalle de Turno', 14, 16);
+        doc.autoTable({
+          head: [['Campo', 'Valor']],
+          body: [
+            ['Fecha', btn.dataset.fecha],
+            ['Hora Inicio', btn.dataset.horaInicio],
+            ['Hora Fin', btn.dataset.horaFinal],
+            ['Médico', btn.dataset.medico],
+            ['Estado', btn.dataset.estado],
+            ['Motivo', btn.dataset.motivo]
+          ],
+          startY: 22,
+          styles: { fontSize: 11 }
+        });
+        doc.save(`turno_${btn.dataset.fecha}_${btn.dataset.horaInicio}.pdf`);
+      });
+    });
