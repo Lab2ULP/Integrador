@@ -35,7 +35,7 @@ exports.crearPaciente = async (req, res) => {
       rolID: 3, // Asumimos que el rol de 'Cliente' tiene ID 3
     });
 
-    nuevoPaciente = Paciente.create({
+    nuevoPaciente = await Paciente.create({
       usuarioID: nuevoUsuario.ID,
       obra_social: obra_social,
       dato_contacto: dato_contacto,
