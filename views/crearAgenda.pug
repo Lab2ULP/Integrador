@@ -26,7 +26,7 @@ block content
       .form-row
         .form-group
           label(for="limiteSobreturnos") Sobreturnos por día
-          input(type="number", name="limiteSobreturnos", max=5, min=0)
+          input(type="number", name="limiteSobreturnos", max=5, min=0 required)
         .form-group
           label(for="duracionTurnos") Duración de los turnos (minutos)
           select(name="duracionTurnos")
@@ -37,15 +37,15 @@ block content
             option(value=60) 60 
       .form-row
         .form-group
-          label(for="fechaDesde") Fecha de inicio
-          input(type="date", name="fechaDesde")  
+          label(for="fechaDesde" ) Fecha de inicio
+          input(type="date", name="fechaDesde" required)  
         .form-group
-          label(for="fechaHasta") Fecha de fin
-          input(type="date", name="fechaHasta")
+          label(for="fechaHasta" ) Fecha de fin
+          input(type="date", name="fechaHasta" required)
       .form-row
         .form-group
           label(for="clasificacionExtra") Clasificación extra
-          select(name="clasificacionExtra")
+          select(name="clasificacionExtra" required)
             option(value="") 
             each clasificacion in clasificacionesExtra
               option(value=clasificacion.ID)= clasificacion.nombre  
@@ -72,10 +72,96 @@ block content
 
     button(type="submit") Enviar
 
-  script.
-    function updateEspecialidadID() {
-      const select = document.getElementById("profesionalSelect");
-      const selectedOption = select.options[select.selectedIndex];
-      const especialidadID = selectedOption.getAttribute("data-especialidad-id");
-      document.getElementById("especialidadIDHidden").value = especialidadID;
-    }
+    script.
+      // Actualiza el campo oculto de especialidad al cambiar profesional
+      function updateEspecialidadID() {
+        const select = document.getElementById("profesionalSelect");
+        const selectedOption = select.options[select.selectedIndex];
+        const especialidadID = selectedOption ? selectedOption.getAttribute("data-especialidad-id") : "";
+        document.getElementById("especialidadIDHidden").value = especialidadID || "";
+      }
+
+      // Habilita/deshabilita los horarios según el checkbox del día
+      document.querySelectorAll('.dia-bloque').forEach(bloque => {
+        const checkbox = bloque.querySelector('input[type="checkbox"]');
+        const horarios = bloque.querySelectorAll('input[type="time"]');
+        function toggleHorarios() {
+          horarios.forEach(input => {
+            input.disabled = !checkbox.checked;
+            if (!checkbox.checked) input.value = "";
+          });
+        }
+        checkbox.addEventListener('change', toggleHorarios);
+        toggleHorarios();
+      });
+
+      // Validaciones al enviar el formulario
+      document.querySelector('form.crear-agenda-form').addEventListener('submit', function(e) {
+        // Validar fechas
+        const fechaDesde = this.querySelector('input[name="fechaDesde"]').value;
+        const fechaHasta = this.querySelector('input[name="fechaHasta"]').value;
+        if (fechaDesde && fechaHasta && fechaHasta < fechaDesde) {
+          alert('La fecha de fin no puede ser anterior a la de inicio.');
+          e.preventDefault();
+          return;
+        }
+
+        // Validar profesional y sucursal
+        if (!this.profesional.value || !this.sucursal.value) {
+          alert('Debes seleccionar un profesional y una sucursal.');
+          e.preventDefault();
+          return;
+        }
+
+        // Validar que al menos un día esté seleccionado
+        const diasSeleccionados = Array.from(this.querySelectorAll('.dia-bloque')).filter(bloque =>
+          bloque.querySelector('input[type="checkbox"]').checked
+        );
+        if (diasSeleccionados.length === 0) {
+          alert('Debes seleccionar al menos un día.');
+          e.preventDefault();
+          return;
+        }
+
+        // Validar horarios de cada día seleccionado
+        for (const bloque of diasSeleccionados) {
+          const inicioManiana = bloque.querySelector('input[name*="[horaInicioManiana]"]').value;
+          const finManiana = bloque.querySelector('input[name*="[horaFinalManiana]"]').value;
+          const inicioTarde = bloque.querySelector('input[name*="[horaInicioTarde]"]').value;
+          const finTarde = bloque.querySelector('input[name*="[horaFinalTarde]"]').value;
+
+          // Si uno de los campos de mañana está lleno, el otro también debe estarlo
+          if ((inicioManiana && !finManiana) || (!inicioManiana && finManiana)) {
+            alert('Si completas un horario de mañana, debes completar ambos (inicio y fin) en el día seleccionado.');
+            e.preventDefault();
+            return;
+          }
+          // Lo mismo para tarde
+          if ((inicioTarde && !finTarde) || (!inicioTarde && finTarde)) {
+            alert('Si completas un horario de tarde, debes completar ambos (inicio y fin) en el día seleccionado.');
+            e.preventDefault();
+            return;
+          }
+
+          const manianaCompleto = inicioManiana && finManiana;
+          const tardeCompleto = inicioTarde && finTarde;
+
+          if (!manianaCompleto && !tardeCompleto) {
+            alert('En cada día seleccionado debe haber al menos un bloque de horarios (mañana o tarde) con inicio y fin.');
+            e.preventDefault();
+            return;
+          }
+
+          // Validar que las horas de inicio sean menores a las de fin
+          if (manianaCompleto && inicioManiana >= finManiana) {
+            alert('En el bloque de mañana, la hora de inicio debe ser menor a la de fin.');
+            e.preventDefault();
+            return;
+          }
+          if (tardeCompleto && inicioTarde >= finTarde) {
+            alert('En el bloque de tarde, la hora de inicio debe ser menor a la de fin.');
+            e.preventDefault();
+            return;
+          }
+        }
+      });

@@ -18,7 +18,9 @@ block content
     const form = document.getElementById('formSucursal');
     const btn = document.getElementById('btnSeleccionar');
 
-    // Desactivar el botón si hay algún número en el input
+    // Desactivar el botón si hay algún número o si está vacío (al cargar)
+    btn.disabled = input.value.trim() === "";
+
     input.addEventListener('input', function() {
       const tieneNumero = /\d/.test(input.value);
       btn.disabled = tieneNumero || input.value.trim() === "";
