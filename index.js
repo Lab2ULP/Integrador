@@ -33,7 +33,7 @@ app.use(
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: process.env.NODE_ENV === "production", // true solo en producción real
+      secure: false, // Cambiar a true si se usa HTTPS
       httpOnly: true,
       sameSite: "lax",
       maxAge: 1000 * 60 * 60 * 24,
