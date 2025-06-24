@@ -28,14 +28,15 @@ const sessionStore = new SequelizeStore({
 
 app.use(
   session({
-    secret: "bicampeones_de_america", // Cambia por un valor más seguro en producción
+    secret: "bicampeones_de_america",
     resave: false,
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production", // true solo en producción real
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24, // 1 día
+      sameSite: "lax",
+      maxAge: 1000 * 60 * 60 * 24,
     },
   })
 );
