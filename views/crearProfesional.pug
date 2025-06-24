@@ -15,11 +15,13 @@ block content
     input(type='date', name='nacimiento', required)
     br
 
+    
     label(for='especialidad') Especialidad:
-    select(name='especialidad', required)
-      option(value='') Seleccione una especialidad
+    input(type='hidden', name='especialidadID', id='especialidadID')
+    input(type="text", name="especialidad", id='especialidad', list='especialidades', placeholder='Buscar especialidad...', required)
+    datalist(id='especialidades')
       each especialidad in especialidades
-        option(value=especialidad.ID)= especialidad.nombre
+        option(value=especialidad.nombre data-id=especialidad.ID)
     br
 
     label(for='matricula') Matrícula:
@@ -27,4 +29,20 @@ block content
     br
 
     button(type='submit') Guardar Profesional
-    a(href='/profesionales/lista') Volver a la lista
+
+  script.
+    const inputEspecialidad = document.getElementById('especialidad');
+    const datalistEspecialidades = document.getElementById('especialidades');
+    const inputEspecialidadId = document.getElementById('especialidadID');
+
+    inputEspecialidad.addEventListener('input', function() {
+      const opcion = Array.from(datalistEspecialidades.options).find(opt => opt.value === inputEspecialidad.value);
+      inputEspecialidadId.value = opcion ? opcion.dataset.id : '';
+    });
+
+    document.querySelector('form').addEventListener('submit', function(e) {
+      if (!inputEspecialidadID.value) {
+        alert('Por favor, selecciona una especialidad válida de la lista.');
+        e.preventDefault();
+      }
+    });
