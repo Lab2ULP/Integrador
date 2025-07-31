@@ -1,29 +1,28 @@
 // /controllers/personaController.js
-const Persona = require('../models/persona'); // Asegúrate de que la ruta sea correcta
-
+const Persona = require("../models/persona"); // Asegúrate de que la ruta sea correcta
 
 // /listar personas
 exports.renderListaPersonas = async (req, res) => {
   try {
     const personas = await Persona.findAll();
- id   
+    id;
     // Convertir nacimiento de string a Date
-    personas.forEach(persona => {
-      if (typeof persona.nacimiento === 'string') {
+    personas.forEach((persona) => {
+      if (typeof persona.nacimiento === "string") {
         persona.nacimiento = new Date(persona.nacimiento);
       }
     });
 
-    return res.render('listarPersonas', { personas });
+    return res.render("listarPersonas", { personas });
   } catch (error) {
     console.error(error);
-    return res.status(500).send('Error al obtener las personas');
+    return res.status(500).send("Error al obtener las personas");
   }
 };
- 
+
 // Renderizar la vista de crear persona
 exports.renderCrearPersona = (req, res) => {
-  res.render('crearPersona');
+  res.render("crearPersona");
 };
 
 // Renderizar la vista de editar persona
@@ -32,28 +31,32 @@ exports.renderEditarPersona = async (req, res) => {
     const persona = await Persona.findByPk(req.params.ID);
 
     // Convertir nacimiento a Date si es una cadena
-    if (typeof persona.nacimiento === 'string') {
+    if (typeof persona.nacimiento === "string") {
       persona.nacimiento = new Date(persona.nacimiento);
     }
 
-    return res.render('editarPersona', { persona });
+    return res.render("editarPersona", { persona });
   } catch (error) {
     console.error(error);
-    return res.status(500).send('Error al cargar la persona para edición');
+    return res.status(500).send("Error al cargar la persona para edición");
   }
 };
 
 // /controllers/personaController.js
 exports.editarPersona = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { nombre, dni, nacimiento } = req.body;
+  const { id } = req.params;
+  const { nombre, dni, nacimiento } = req.body;
 
+  const t = await createTransaction(); // Asegúrate de crear una transacción si es necesario
+  try {
     // Actualizar la persona en la base de datos
     await Persona.update(
       { nombre, dni, nacimiento },
-      { where: { id } }
+      { where: { id } },
+      { transaction: t }
     );
+
+    await t.commit(); // Confirmar la transacción si todo salió bien
 
     // Envía una respuesta de éxito con un alert y redirige
     res.send(`
@@ -63,33 +66,36 @@ exports.editarPersona = async (req, res) => {
       </script>
     `);
   } catch (error) {
+    await t.rollback(); // Deshacer la transacción en caso de error
     console.error(error);
-    return res.status(500).send('Error al actualizar la persona');
+    return res.status(500).send("Error al actualizar la persona");
   }
 };
-
-
 
 // Renderizar la vista de confirmar borrado
 exports.renderBorrarPersona = async (req, res) => {
   try {
     const persona = await Persona.findByPk(req.params.id);
     if (!persona) {
-      return res.status(404).send('Persona no encontrada');
+      return res.status(404).send("Persona no encontrada");
     }
-    return res.render('borrarPersona', { persona });
+    return res.render("borrarPersona", { persona });
   } catch (error) {
     console.error(error);
-    return res.status(500).send('Error al obtener la persona');
+    return res.status(500).send("Error al obtener la persona");
   }
 };
 
 // Crear una nueva persona
 exports.createPersona = async (req, res) => {
+  const { nombre, dni, nacimiento } = req.body;
+  const t = await createTransaction(); // Asegúrate de crear una transacción si es necesario
   try {
-    const { nombre, dni, nacimiento } = req.body;
-    const nuevaPersona = await Persona.create({ nombre, dni, nacimiento });
-
+    const nuevaPersona = await Persona.create(
+      { nombre, dni, nacimiento },
+      { transaction: t }
+    );
+    await t.commit(); // Confirmar la transacción si todo salió bien
     // Envía una respuesta de éxito con un alert y redirige
     res.send(`
       <script>
@@ -98,18 +104,26 @@ exports.createPersona = async (req, res) => {
       </script>
     `);
   } catch (error) {
+    await t.rollback(); // Deshacer la transacción en caso de error
     console.error(error);
-    res.status(500).send('Error al crear la persona');
+    res.status(500).send("Error al crear la persona");
   }
 };
 
 // Actualizar una persona existente
 exports.updatePersona = async (req, res) => {
+  const { nombre, dni, nacimiento } = req.body;
+  const t = await createTransaction(); // Asegúrate de crear una transacción si es necesario
   try {
-    const { nombre, dni, nacimiento } = req.body;
-    await Persona.update({ nombre, dni, nacimiento }, {
-      where: { ID: req.params.id },
-    });
+    await Persona.update(
+      { nombre, dni, nacimiento },
+      {
+        where: { ID: req.params.id },
+      },
+      { transaction: t }
+    );
+
+    await t.commit(); // Confirmar la transacción si todo salió bien
 
     // Envía una respuesta de éxito con un alert y redirige
     res.send(`
@@ -119,16 +133,24 @@ exports.updatePersona = async (req, res) => {
       </script>
     `);
   } catch (error) {
+    await t.rollback(); // Deshacer la transacción en caso de error
     console.error(error);
-    res.status(500).send('Error al actualizar la persona');
+    res.status(500).send("Error al actualizar la persona");
   }
 };
+
 // Eliminar una persona
 exports.deletePersona = async (req, res) => {
+  const t = await createTransaction(); // Asegúrate de crear una transacción si es necesario
   try {
-    await Persona.destroy({
-      where: { ID: req.params.id },
-    });
+    await Persona.destroy(
+      {
+        where: { ID: req.params.id },
+      },
+      { transaction: t }
+    );
+
+    await t.commit(); // Confirmar la transacción si todo salió bien
 
     // Envía una respuesta de éxito con un alert y redirige
     res.send(`
@@ -138,7 +160,8 @@ exports.deletePersona = async (req, res) => {
       </script>
     `);
   } catch (error) {
+    await t.rollback(); // Deshacer la transacción en caso de error
     console.error(error);
-    res.status(500).send('Error al eliminar la persona');
+    res.status(500).send("Error al eliminar la persona");
   }
 };

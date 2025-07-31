@@ -69,21 +69,32 @@ exports.renderEditarProfesional = async (req, res) => {
 };
 
 exports.editarProfesional = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { nombre, dni, nacimiento } = req.body;
+  const { id } = req.params;
+  const { nombre, dni, nacimiento } = req.body;
 
+  const t = await sequelize.transaction();
+  try {
     // Encuentra el profesional junto con la persona asociada
-    const profesional = await Profesional.findByPk(id, {
-      include: [{ model: Persona }],
-    });
+    const profesional = await Profesional.findByPk(
+      id,
+      {
+        include: [{ model: Persona }],
+      },
+      { transaction: t }
+    );
 
     if (!profesional) {
+      await t.rollback();
       return res.status(404).send("Profesional no encontrado");
     }
 
     // Actualizar datos de Persona
-    await profesional.Persona.update({ nombre, dni, nacimiento });
+    await profesional.Persona.update(
+      { nombre, dni, nacimiento },
+      { transaction: t }
+    );
+
+    await t.commit();
 
     // Envía una respuesta de éxito con un alert y redirige
     res.send(`
@@ -93,6 +104,7 @@ exports.editarProfesional = async (req, res) => {
       </script>
     `);
   } catch (error) {
+    await t.rollback();
     console.error("Error al actualizar el profesional:", error);
     return res.status(500).send("Error al actualizar el profesional");
   }
@@ -100,13 +112,16 @@ exports.editarProfesional = async (req, res) => {
 
 exports.actualizarEstado = async (req, res) => {
   const { profesionalID, estado } = req.body;
-
+  const t = await sequelize.transaction();
   // Aquí actualizas el estado del médico en la base de datos
   try {
     await Profesional.update(
       { estado: estado },
-      { where: { ID: profesionalID } }
+      { where: { ID: profesionalID } },
+      { transaction: t }
     );
+
+    await t.commit();
 
     res.send(`
       <script>
@@ -115,6 +130,7 @@ exports.actualizarEstado = async (req, res) => {
       </script>
     `);
   } catch (error) {
+    await t.rollback();
     console.error("Error al actualizar el estado:", error);
     res.status(500).send("Error al actualizar el estado");
   }
@@ -215,13 +231,19 @@ exports.getAllProfesionalDiasNoLaborables = async (req, res) => {
 exports.sumarEspecialidad = async (req, res) => {
   const { especialidad, matricula } = req.body;
   const profesionalID = req.params.id; // Asegúrate de que este id es correcto
+  const t = await sequelize.transaction();
   try {
     // Cambiar los nombres de las propiedades para que coincidan con los nombres de las columnas de la tabla intermedia
-    await ProfesionalEspecialidad.create({
-      especialidadID: especialidad, // Asegúrate de que esto sea el ID de la especialidad
-      profesionalID: profesionalID, // Esto es correcto
-      matricula: matricula, // Esto es correcto
-    });
+    await ProfesionalEspecialidad.create(
+      {
+        especialidadID: especialidad, // Asegúrate de que esto sea el ID de la especialidad
+        profesionalID: profesionalID, // Esto es correcto
+        matricula: matricula, // Esto es correcto
+      },
+      { transaction: t }
+    );
+
+    await t.commit();
 
     // Envía una respuesta de éxito con un alert y redirige
     res.send(`
@@ -231,6 +253,7 @@ exports.sumarEspecialidad = async (req, res) => {
       </script>
     `);
   } catch (error) {
+    await t.rollback();
     console.error("Error al añadir especialidad", error);
     res.status(500).send("Error al añadir especialidad"); // Respuesta de error adecuada
   }
@@ -238,15 +261,20 @@ exports.sumarEspecialidad = async (req, res) => {
 
 exports.borrarEspecialidad = async (req, res) => {
   const { profesionalID, especialidadID } = req.body;
-
+  const t = await sequelize.transaction();
   try {
     // Busca y elimina la relación donde coincidan ambos IDs
-    await ProfesionalEspecialidad.destroy({
-      where: {
-        profesionalID: profesionalID,
-        especialidadID: especialidadID,
+    await ProfesionalEspecialidad.destroy(
+      {
+        where: {
+          profesionalID: profesionalID,
+          especialidadID: especialidadID,
+        },
       },
-    });
+      { transaction: t }
+    );
+
+    await t.commit();
 
     // Envía una respuesta de éxito con un alert y redirige
     res.send(`
@@ -256,6 +284,7 @@ exports.borrarEspecialidad = async (req, res) => {
       </script>
     `);
   } catch (error) {
+    await t.rollback();
     console.error("Error al eliminar la especialidad del profesional:", error);
     res.status(500).send("Error al eliminar la especialidad del profesional");
   }

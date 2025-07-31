@@ -1,6 +1,6 @@
-const { Agenda, Dia, ProfesionalEspecialidad } = require ('../models/main');
-const AgendaDia = require ('../models/agendaDia');
-const { Op } = require('sequelize');
+const { Agenda, Dia, ProfesionalEspecialidad } = require("../models/main");
+const AgendaDia = require("../models/agendaDia");
+const { Op } = require("sequelize");
 
 exports.obtenerTodosDiasAgendas = async (req, res) => {
   try {
@@ -9,7 +9,7 @@ exports.obtenerTodosDiasAgendas = async (req, res) => {
 
     // Devuelve los registros en formato JSON
     // res.json(diasAgendas);
-    res.render('diasAgenda', { diasAgendas });
+    res.render("diasAgenda", { diasAgendas });
   } catch (error) {
     console.error("Error al obtener los registros de dias_agendas:", error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -18,12 +18,16 @@ exports.obtenerTodosDiasAgendas = async (req, res) => {
 
 // Controlador para manejar CRUD en dias_agendas
 exports.agregarDiaAgenda = async (req, res) => {
-  try {
-    const { agendaID, diaID, hora_inicio, hora_final } = req.body;
+  const { agendaID, diaID, hora_inicio, hora_final } = req.body;
+  const t = await sequelize.transaction(); // Iniciar una transacción
 
+  try {
     // Validación de datos
     if (!agendaID || !diaID || !hora_inicio || !hora_final) {
-      return res.status(400).json({ error: "Todos los campos son obligatorios" });
+      await t.rollback(); // Revertir la transacción si falta algún campo
+      return res
+        .status(400)
+        .json({ error: "Todos los campos son obligatorios" });
     }
 
     // Verificar si ya existe un registro con la misma agendaID y diaID
@@ -31,25 +35,34 @@ exports.agregarDiaAgenda = async (req, res) => {
       where: {
         agendaID: agendaID,
         diaID: diaID,
-        [Op.or]: [
-          { hora_inicio: hora_inicio },
-          { hora_final: hora_final }
-        ]
-      }
+        [Op.or]: [{ hora_inicio: hora_inicio }, { hora_final: hora_final }],
+      },
+      transaction: t,
     });
 
     // Si ya existe un registro con las mismas horas, devolver un error
     if (existente) {
-      return res.status(400).json({ error: "Ya existe un registro para esta agenda y día en el mismo rango de horas" });
+      await t.rollback(); // Revertir la transacción si ya existe un registro
+      return res
+        .status(400)
+        .json({
+          error:
+            "Ya existe un registro para esta agenda y día en el mismo rango de horas",
+        });
     }
 
     // Inserción en la base de datos usando Sequelize
-    await AgendaDia.create({
-      agendaID: agendaID,
-      diaID: diaID,
-      hora_inicio: hora_inicio,
-      hora_final: hora_final
-    });
+    await AgendaDia.create(
+      {
+        agendaID: agendaID,
+        diaID: diaID,
+        hora_inicio: hora_inicio,
+        hora_final: hora_final,
+      },
+      { transaction: t }
+    );
+
+    await t.commit();
 
     // Mostrar un alert y redirigir
     res.send(`
@@ -59,18 +72,20 @@ exports.agregarDiaAgenda = async (req, res) => {
       </script>
     `);
   } catch (error) {
+    await t.rollback(); // Revertir la transacción en caso de error
     console.error("Error al agregar un registro en dias_agendas:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
 
-  
 // Función para actualizar un registro existente en dias_agendas
 exports.actualizarDiaAgenda = async (req, res) => {
-  try {
-    const { ID, diaID, hora_inicio, hora_final } = req.body;
+  const { ID, diaID, hora_inicio, hora_final } = req.body;
+  const t = await sequelize.transaction();
 
+  try {
     if (!ID) {
+      await t.rollback(); // Revertir la transacción si no se proporciona un ID
       console.log("No se proporcionó un ID");
       return res.status(400).json({ error: "ID no proporcionado" });
     }
@@ -80,13 +95,14 @@ exports.actualizarDiaAgenda = async (req, res) => {
       {
         diaID: diaID,
         hora_inicio: hora_inicio,
-        hora_final: hora_final
+        hora_final: hora_final,
       },
       {
-        where: { ID } // Asegúrate de que este sea el ID correcto
-      }
+        where: { ID }, // Asegúrate de que este sea el ID correcto
+      },
+      { transaction: t }
     );
-
+    await t.commit(); // Confirmar la transacción
     // Mostrar un alert y redirigir
     res.send(`
       <script>
@@ -95,34 +111,41 @@ exports.actualizarDiaAgenda = async (req, res) => {
       </script>
     `);
   } catch (error) {
+    await t.rollback(); // Revertir la transacción en caso de error
     console.error("Error al actualizar un registro en dias_agendas:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
-  
+
 // Función para eliminar un registro en dias_agendas
 exports.eliminarDiaAgenda = async (req, res) => {
-  try {
-    const { ID } = req.body; // Asegúrate de que el ID se obtenga del cuerpo de la solicitud
+  const { ID } = req.body; // Asegúrate de que el ID se envíe en el cuerpo de la solicitud
+  const t = await sequelize.transaction(); // Iniciar una transacción
 
+  try {
     // Validar que ID no sea undefined
     if (!ID) {
+      await t.rollback(); // Revertir la transacción si no se proporciona un ID
       return res.status(400).json({ error: "ID no proporcionado" });
     }
 
     // Eliminar el registro en la base de datos
-    const delDiaAgenda = await AgendaDia.destroy({
-      where: {
-        ID: ID // Asegúrate de que esto corresponde a la columna correcta en la base de datos
-      }
-    });
+    const delDiaAgenda = await AgendaDia.destroy(
+      {
+        where: {
+          ID: ID, // Asegúrate de que esto corresponde a la columna correcta en la base de datos
+        },
+      },
+      { transaction: t }
+    );
 
     // Comprobar si se encontró y eliminó el registro
     if (delDiaAgenda === 0) {
-      console.log('Registro no encontrado para el ID:', ID);
-      return res.status(404).json({ error: 'Registro no encontrado' });
+      await t.rollback(); // Revertir la transacción si no se encontró el registro
+      console.log("Registro no encontrado para el ID:", ID);
+      return res.status(404).json({ error: "Registro no encontrado" });
     }
-
+    await t.commit(); // Confirmar la transacción
     // Mostrar un alert y redirigir
     res.send(`
       <script>
@@ -131,10 +154,8 @@ exports.eliminarDiaAgenda = async (req, res) => {
       </script>
     `);
   } catch (error) {
+    await t.rollback(); // Revertir la transacción en caso de error
     console.error("Error al eliminar un registro en dias_agendas:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
-  
-  
-  

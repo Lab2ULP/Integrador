@@ -1,3 +1,4 @@
+const sequelize = require("../config/database");
 const {
   Persona,
   Usuario,
@@ -22,24 +23,37 @@ exports.crearPaciente = async (req, res) => {
     dato_contacto,
   } = req.body;
 
+  const t = sequelize.transaction(); // Iniciar una transacción
+
   try {
     // Crear la persona primero
-    const nuevaPersona = await Persona.create({ nombre, dni, nacimiento });
+    const nuevaPersona = await Persona.create(
+      { nombre, dni, nacimiento },
+      { transaction: t }
+    );
 
     // Crear el usuario con rol de Cliente, usando el personaID de la persona creada
-    const nuevoUsuario = await Usuario.create({
-      personaID: nuevaPersona.ID,
-      email,
-      password,
+    const nuevoUsuario = await Usuario.create(
+      {
+        personaID: nuevaPersona.ID,
+        email,
+        password,
 
-      rolID: 3, // Asumimos que el rol de 'Cliente' tiene ID 3
-    });
+        rolID: 3, // Asumimos que el rol de 'Cliente' tiene ID 3
+      },
+      { transaction: t }
+    );
 
-    nuevoPaciente = await Paciente.create({
-      usuarioID: nuevoUsuario.ID,
-      obra_social: obra_social,
-      dato_contacto: dato_contacto,
-    });
+    nuevoPaciente = await Paciente.create(
+      {
+        usuarioID: nuevoUsuario.ID,
+        obra_social: obra_social,
+        dato_contacto: dato_contacto,
+      },
+      { transaction: t }
+    );
+
+    await t.commit(); // Confirmar la transacción
 
     res.send(`
         <script>
@@ -48,6 +62,7 @@ exports.crearPaciente = async (req, res) => {
         </script>
       `);
   } catch (error) {
+    await t.rollback(); // Revertir la transacción en caso de error
     console.error(error);
     res.status(500).send("Error al crear el paciente");
   }
