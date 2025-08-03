@@ -1,0 +1,82 @@
+h1 {
+  color: #007bff;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+form {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  max-width: 500px;
+}
+
+label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: bold;
+  color: #333;
+}
+
+input[type="text"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 0.7rem;
+  font-size: 1rem;
+}
+
+button[type="submit"] {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 0.7rem;
+  transition: background 0.2s;
+}
+
+button[type="submit"]:hover {
+  background: #0056b3;
+}
+
+form[action="/profesionales/borrarEspecialidad"] {
+  display: inline-block;
+  margin-right: 1rem;
+  margin-bottom: 0.5rem;
+  background: #f8f9fa;
+  box-shadow: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+form[action="/profesionales/borrarEspecialidad"] button {
+  background: #dc3545;
+  margin-left: 0.5rem;
+}
+
+form[action="/profesionales/borrarEspecialidad"] button:hover {
+  background: #b52a37;
+}
+
+a {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #0056b3;
+}

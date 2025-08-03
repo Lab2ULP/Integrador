@@ -1,7 +1,10 @@
 extends layoutAdmin
 
+block head
+  link(rel="stylesheet", href="/styles/diasAgenda.css")
+
 block content
-    h1 Gestión de Días y Agendas
+    h1.h1-dias-agenda Gestión de Días y Agendas
 
     form(method="POST" action="/diasAgenda/agregar" class="form-agregar")
       h2 Agregar Nuevo Día de Agenda

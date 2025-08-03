@@ -1,0 +1,108 @@
+/* Título principal */
+.h1-dias-agenda {
+  color: #007bff;
+  margin-bottom: 1.5rem;
+  font-size: 1.7rem;
+  font-weight: bold;
+}
+
+/* Subtítulos */
+h2 {
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+/* Formulario de agregar */
+.form-agregar {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  max-width: 500px;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: bold;
+  color: #333;
+}
+
+input[type="number"],
+input[type="time"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 0.7rem;
+  font-size: 1rem;
+}
+
+button[type="submit"],
+button[type="button"] {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  transition: background 0.2s;
+}
+
+button[type="submit"]:hover,
+button[type="button"]:hover {
+  background: #0056b3;
+}
+
+button[disabled] {
+  background: #ccc !important;
+  color: #888 !important;
+  cursor: not-allowed;
+}
+
+/* Tabla de días y agendas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+th,
+td {
+  border: 1px solid #e0e0e0;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+th {
+  background: #f4f4f4;
+  color: #333;
+  font-weight: bold;
+}
+
+/* Formularios en la tabla */
+form {
+  display: inline-block;
+  margin: 0.2rem 0.2rem 0 0;
+}
+
+form[action="/diasAgenda/eliminar"] button[type="submit"] {
+  background: #dc3545;
+}
+
+form[action="/diasAgenda/eliminar"] button[type="submit"]:hover {
+  background: #b52a37;
+}

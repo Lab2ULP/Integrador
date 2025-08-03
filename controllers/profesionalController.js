@@ -4,6 +4,7 @@ const {
   DiasNoLaborables,
   ProfesionalDiasNoLaborables,
   Especialidad,
+  sequelize,
 } = require("../models/main");
 const ProfesionalEspecialidad = require("../models/profesionalEspecialidad");
 //const ProfesionalDiasNoLaborables = require('../models/profesionalDiasNoLaborables')
@@ -147,7 +148,6 @@ exports.renderCrear = async (req, res) => {
 
 exports.crearProfesional = async (req, res) => {
   const { nombre, dni, nacimiento, especialidadID, matricula } = req.body;
-  const sequelize = require("../models/main").sequelize; // Asegúrate de importar tu instancia
 
   const t = await sequelize.transaction();
   try {
@@ -233,29 +233,28 @@ exports.sumarEspecialidad = async (req, res) => {
   const profesionalID = req.params.id; // Asegúrate de que este id es correcto
   const t = await sequelize.transaction();
   try {
-    // Cambiar los nombres de las propiedades para que coincidan con los nombres de las columnas de la tabla intermedia
+    // Crear la relación en la tabla intermedia dentro de la transacción
     await ProfesionalEspecialidad.create(
       {
-        especialidadID: especialidad, // Asegúrate de que esto sea el ID de la especialidad
-        profesionalID: profesionalID, // Esto es correcto
-        matricula: matricula, // Esto es correcto
+        especialidadID: especialidad,
+        profesionalID: profesionalID,
+        matricula: matricula,
       },
       { transaction: t }
     );
 
     await t.commit();
 
-    // Envía una respuesta de éxito con un alert y redirige
     res.send(`
       <script>
         alert('Especialidad añadida correctamente.');
-        window.location.href = '/profesionales/lista'; // Redirige a la lista de profesionales
+        window.location.href = '/profesionales/lista';
       </script>
     `);
   } catch (error) {
     await t.rollback();
     console.error("Error al añadir especialidad", error);
-    res.status(500).send("Error al añadir especialidad"); // Respuesta de error adecuada
+    res.status(500).send("Error al añadir especialidad");
   }
 };
 

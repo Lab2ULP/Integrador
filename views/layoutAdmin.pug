@@ -1,32 +1,32 @@
 doctype html
 html
   head
-    title Mi Aplicación
-    link(rel="stylesheet" href="/styles/layoutAdmin.css") 
+    title Mi Aplicación - Admin
+    link(rel="stylesheet" href="/styles/layoutAdmin.css")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    block head
   body
-    // Header con título y menú de navegación
     header
-      .container
+      .header-container
         h1 Mi Aplicación
-        nav
+        nav.header-nav(aria-label="Navegación principal")
           a(href="/") Inicio
           a(href="/otra-ruta") Otra sección
-
-    // Contenedor principal con el menú lateral y el contenido
-    .container-main
-      aside
-        h3 Menú de navegación
-        ul
-          li: a(href="/profesionales/profesionalesDnl") Dias no laborables
-          li: a(href="/clasificaciones/listar") Clasificaciones
-          li: a(href="/profesionales/lista") Lista de médicos
-          li: a(href="/diasAgenda/todos") Días Agenda
-          li: a(href="/turnos/todos") Turnos
-      main
-        block content
-        form(action='/auth/logout', method='POST')
+        form.logout-form(action='/auth/logout', method='POST')
           button(type='submit') Cerrar sesión
 
-    // Footer con copyright
-    footer
+    .layout-main
+      aside.sidebar
+        nav.sidebar-nav(aria-label="Menú de administración")
+          h3 Menú de navegación
+          ul
+            li: a(href="/profesionales/profesionalesDnl") Días no laborables
+            li: a(href="/clasificaciones/listar") Clasificaciones
+            li: a(href="/profesionales/lista") Lista de médicos
+            li: a(href="/diasAgenda/todos") Días Agenda
+            li: a(href="/turnos/todos") Turnos
+      main.layout-content
+        block content
+
+    footer.footer
       p © 2024 Mi Aplicación

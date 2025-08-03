@@ -1,7 +1,10 @@
 extends layoutAdmin
 
+block head
+  link(rel="stylesheet", href="/styles/profesionaldnl.css")
+
 block content
-    h1 Profesionales - Fecha No Laboral
+    h1.dnl-h1 Profesionales - Fecha No Laboral
     
     table
       thead
@@ -20,4 +23,4 @@ block content
               form(action='/noLaborables/remove', method='POST')
                 input(type='hidden', name='ID', value=dia.ID)
                 button(type='submit') Eliminar
-    a(href="/noLaborables/agregar") Agregar un dia no laborable           
+    a.dnl-btn(href="/noLaborables/agregar") Agregar un dia no laborable           

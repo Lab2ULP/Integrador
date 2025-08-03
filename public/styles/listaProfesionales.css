@@ -1,0 +1,92 @@
+.main-content {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.main-content h1 {
+  margin-bottom: 1.5rem;
+  color: #007bff;
+  font-size: 1.6rem;
+}
+
+.main-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  background: #fafbfc;
+}
+
+.main-content th,
+.main-content td {
+  border: 1px solid #e0e0e0;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.main-content th {
+  background: #f4f4f4;
+  color: #333;
+}
+
+.main-content ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.acciones {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.acciones form {
+  display: inline;
+}
+
+.acciones button {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.acciones button:hover {
+  background: #b52a37;
+}
+
+.acciones a {
+  background: #007bff;
+  color: #fff;
+  border-radius: 4px;
+  padding: 0.3rem 0.8rem;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+.acciones a:hover {
+  background: #0056b3;
+}
+
+.btn {
+  display: inline-block;
+  background: #28a745;
+  color: #fff;
+  padding: 0.5rem 1.2rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.2s;
+  margin-top: 1rem;
+}
+
+.btn:hover {
+  background: #1e7e34;
+}
